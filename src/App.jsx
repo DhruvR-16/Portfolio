@@ -1,14 +1,15 @@
-import { Starfield, CursorGlow, Divider } from './components/Shared';
-import { Hero } from './components/Hero';
-import { Work } from './components/Work';
-import { Photography } from './components/Photography';
-import { Thinking } from './components/Thinking';
-import { Contact } from './components/Contact';
+import { Starfield, CursorGlow, Divider, ScrollProgress } from './components/Shared/Shared';
+import { Hero } from './components/Hero/Hero';
+import { Work } from './components/Work/Work';
+import { Photography } from './components/Photography/Photography';
+import { Thinking } from './components/Thinking/Thinking';
+import { Contact } from './components/Contact/Contact';
 import './styles/globals.css';
 
 function App() {
   return (
     <div style={{ position: 'relative', overflowX: 'hidden' }}>
+      <ScrollProgress />
       <Starfield />
       <CursorGlow />
       <main style={{ position: 'relative', zIndex: 2 }}>

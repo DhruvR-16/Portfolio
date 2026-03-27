@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap');
 
 :root {
-  --bg-dark: #05050a;
-  --bg-card: rgba(15, 15, 30, 0.4);
-  --accent-primary: #8b7cf6;
-  --accent-secondary: #c8c3ff;
+  --bg-dark: #020408;
+  --bg-card: rgba(10, 15, 25, 0.4);
+  --accent-primary: #00f2ff; /* Futuristic Cyan */
+  --accent-secondary: #70faff;
   --text-main: rgba(240, 238, 248, 0.95);
   --text-dim: rgba(122, 120, 138, 0.8);
   --text-muted: rgba(122, 120, 138, 0.4);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-glow: rgba(139, 124, 246, 0.08);
+  --glass-border: rgba(0, 242, 255, 0.08); /* Cyan-tinted border */
+  --glass-glow: rgba(0, 242, 255, 0.05);
   
   --font-serif: 'DM Serif Display', serif;
   --font-sans: 'Inter', sans-serif;
@@ -47,7 +47,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139, 124, 246, 0.2);
+  background: rgba(0, 242, 255, 0.2);
   border-radius: 2px;
 }
 
@@ -57,7 +57,6 @@ a {
   transition: var(--transition-smooth);
 }
 
-/* Glassmorphism Utility */
 .glass {
   background: var(--bg-card);
   backdrop-filter: blur(12px);
@@ -84,7 +83,6 @@ a {
   background-clip: text;
 }
 
-/* Animations */
 @keyframes float {
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
