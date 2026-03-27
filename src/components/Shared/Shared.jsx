@@ -3,6 +3,7 @@ import { motion, useScroll, useSpring } from 'framer-motion';
 
 export function Starfield() {
   const canvasRef = useRef(null);
+  
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -10,120 +11,127 @@ export function Starfield() {
     if (!ctx) return;
     
     let animId;
-    const stars = [];
+    let stars = [];
     const shootingStars = [];
     
+    const initStars = () => {
+      stars = [];
+      // High density for unmistakable visibility
+      const count = Math.floor((window.innerWidth * window.innerHeight) / 1500); 
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          r: Math.random() * 2.0 + 0.4, // Clearly visible
+          baseAlpha: Math.random() * 0.6 + 0.4, 
+          speed: Math.random() * 0.005 + 0.002,
+          phase: Math.random() * Math.PI * 2,
+          color: Math.random() > 0.5 ? '#a5b4fc' : '#fda4af'
+        });
+      }
+    };
+
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      initStars();
     };
+    
     resize();
     window.addEventListener('resize', resize);
 
-    for (let i = 0; i < 300; i++) {
-      stars.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        r: Math.random() * 1.5 + 0.2,
-        baseAlpha: Math.random() * 0.8 + 0.2, 
-        speed: Math.random() * 0.02 + 0.005,
-        phase: Math.random() * Math.PI * 2,
-      });
-    }
-
     const createShootingStar = () => {
-      const edge = Math.floor(Math.random() * 3);
-      let x, y, angle;
-      
-      if (edge === 0) {
-        x = Math.random() * canvas.width;
-        y = -20;
-        angle = Math.PI * (0.5 + Math.random() * 0.5);
-      } else if (edge === 1) {
-        x = canvas.width + 20;
-        y = Math.random() * canvas.height * 0.6;
-        angle = Math.PI * (0.8 + Math.random() * 0.2);
-      } else {
-        x = -20;
-        y = Math.random() * canvas.height * 0.6;
-        angle = Math.PI * (0.0 + Math.random() * 0.2);
-      }
-
       shootingStars.push({
-        x,
-        y,
-        len: Math.random() * 100 + 50,
-        speed: Math.random() * 12 + 6,
-        angle,
-        opacity: 1,
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height * 0.9,
+        len: Math.random() * 160 + 100,
+        speed: Math.random() * 20 + 14,
+        angle: Math.PI * 0.75 + (Math.random() - 0.5) * 0.6,
+        life: 0,
+        color: Math.random() > 0.5 ? '#a5b4fc' : '#fda4af'
       });
     };
 
     let t = 0;
     const draw = () => {
-      ctx.fillStyle = '#020408';
+      // Solid base layer
+      ctx.fillStyle = '#05060f';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      t += 0.015;
+      t += 0.012;
       
       stars.forEach((s) => {
-        const pulse = s.baseAlpha * (0.4 + 0.6 * Math.abs(Math.sin(t * s.speed * 40 + s.phase)));
+        const pulse = s.baseAlpha * (0.6 + 0.4 * Math.sin(t * s.speed * 40 + s.phase));
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 242, 255, ${pulse})`; // Cyan stars
+        const colorRgb = s.color === '#a5b4fc' ? '165, 180, 252' : '253, 164, 175';
+        ctx.fillStyle = `rgba(${colorRgb}, ${pulse})`;
         ctx.fill();
         
-        if (s.r > 1.2) {
-          ctx.shadowBlur = 4;
-          ctx.shadowColor = 'rgba(0, 242, 255, 0.4)';
-          ctx.fill();
-          ctx.shadowBlur = 0;
-        }
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = s.color;
+        ctx.fill();
+        ctx.shadowBlur = 0;
       });
 
-      if (Math.random() < 0.012) createShootingStar();
+      if (Math.random() < 0.045) createShootingStar();
       
       for (let i = shootingStars.length - 1; i >= 0; i--) {
         const s = shootingStars[i];
+        s.life += 0.015;
+        const opacity = Math.sin(Math.PI * s.life) * 1.0;
+        
         ctx.beginPath();
         const gradient = ctx.createLinearGradient(
           s.x, s.y, 
           s.x - Math.cos(s.angle) * s.len, 
           s.y + Math.sin(s.angle) * s.len
         );
-        gradient.addColorStop(0, `rgba(0, 242, 255, ${s.opacity})`);
-        gradient.addColorStop(1, 'rgba(0, 242, 255, 0)');
+        const colorRgb = s.color === '#a5b4fc' ? '165, 180, 252' : '253, 164, 175';
+        gradient.addColorStop(0, `rgba(${colorRgb}, ${opacity})`);
+        gradient.addColorStop(1, `rgba(${colorRgb}, 0)`);
         
         ctx.strokeStyle = gradient;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.moveTo(s.x, s.y);
         ctx.lineTo(s.x - Math.cos(s.angle) * s.len, s.y + Math.sin(s.angle) * s.len);
         ctx.stroke();
         
         s.x += Math.cos(s.angle) * s.speed;
         s.y -= Math.sin(s.angle) * s.speed;
-        s.opacity -= 0.015;
         
-        if (s.opacity <= 0 || s.x < -200 || s.x > canvas.width + 200 || s.y > canvas.height + 200) {
-          shootingStars.splice(i, 1);
-        }
+        if (s.life >= 1) shootingStars.splice(i, 1);
       }
-
       animId = requestAnimationFrame(draw);
     };
     
     draw();
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize); };
+    return () => { 
+      cancelAnimationFrame(animId); 
+      window.removeEventListener('resize', resize); 
+    };
   }, []);
   
-  return <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', background: '#020408' }} />;
+  return (
+    <canvas 
+      ref={canvasRef} 
+      style={{ 
+        position: 'fixed', 
+        inset: 0, 
+        zIndex: 0, 
+        pointerEvents: 'none', 
+        background: '#05060f',
+        width: '100vw',
+        height: '100vh',
+        display: 'block'
+      }} 
+    />
+  );
 }
 
 export function CursorGlow() {
   const glowRef = useRef(null);
   const dotRef = useRef(null);
   const pos = useRef({ x: -300, y: -300 });
-  const glow = useRef({ x: -300, y: -300 });
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
@@ -137,12 +145,9 @@ export function CursorGlow() {
     window.addEventListener('mouseover', handleOver);
 
     let id;
-    const lerp = (a, b, t) => a + (b - a) * t;
     const tick = () => {
-      glow.current.x = lerp(glow.current.x, pos.current.x, 0.07);
-      glow.current.y = lerp(glow.current.y, pos.current.y, 0.07);
       if (glowRef.current) {
-        glowRef.current.style.transform = `translate(${glow.current.x - 200}px, ${glow.current.y - 200}px)`;
+        glowRef.current.style.transform = `translate(${pos.current.x - 150}px, ${pos.current.y - 150}px)`;
       }
       if (dotRef.current) {
         dotRef.current.style.transform = `translate(${pos.current.x - 4}px, ${pos.current.y - 4}px) scale(${isHovering ? 2.5 : 1})`;
@@ -159,8 +164,8 @@ export function CursorGlow() {
 
   return (
     <>
-      <div ref={glowRef} style={{ position: 'fixed', width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(0, 242, 255, 0.08) 0%, transparent 70%)', zIndex: 1, pointerEvents: 'none', willChange: 'transform', top: 0, left: 0 }} />
-      <div ref={dotRef} style={{ position: 'fixed', width: 8, height: 8, borderRadius: '50%', background: 'rgba(0, 242, 255, 0.9)', zIndex: 9999, pointerEvents: 'none', willChange: 'transform', mixBlendMode: 'screen', top: 0, left: 0, transition: 'transform 0.2s ease' }} />
+      <div ref={glowRef} style={{ position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(165,180,252,0.1) 0%, transparent 70%)', zIndex: 1, pointerEvents: 'none', willChange: 'transform', top: 0, left: 0 }} />
+      <div ref={dotRef} style={{ position: 'fixed', width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-primary)', zIndex: 9999, pointerEvents: 'none', willChange: 'transform', top: 0, left: 0, transition: 'transform 0.2s ease, background 0.3s ease' }} />
     </>
   );
 }
@@ -181,10 +186,11 @@ export function ScrollProgress() {
         left: 0,
         right: 0,
         height: '2px',
-        background: 'var(--accent-primary)',
+        background: 'linear-gradient(to right, var(--accent-primary), var(--accent-secondary))',
         transformOrigin: '0%',
         zIndex: 10000,
-        scaleX
+        scaleX,
+        opacity: 0.8
       }}
     />
   );

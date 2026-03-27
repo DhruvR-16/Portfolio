@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ExternalLink, Github, Code2, Cpu, Brain, Search } from 'lucide-react';
+import { Cpu, Brain } from 'lucide-react';
 import { SectionLabel } from '../Shared/Shared';
 
 const projects = [
@@ -11,7 +11,7 @@ const projects = [
     tech: ["Python", "ML", "Data Optimization"],
     insight: "Real-world AI is limited more by hardware constraints than algorithm sophistication.",
     status: "Completed",
-    icon: <Cpu size={20} />
+    icon: <Cpu size={21} />
   },
   {
     num: "02",
@@ -20,7 +20,7 @@ const projects = [
     tech: ["PyTorch", "Gymnasium", "Reinforcement Learning"],
     insight: "Curiosity-driven exploration consistently outperforms random in low-data regimes.",
     status: "In Progress",
-    icon: <Brain size={20} />
+    icon: <Brain size={21} />
   },
 ];
 
@@ -37,13 +37,13 @@ function ProjectCard({ project, index }) {
       onMouseLeave={() => setIsHovered(false)}
       className="glass"
       style={{ 
-        padding: '2.5rem', 
+        padding: '3rem', 
         position: 'relative', 
         overflow: 'hidden',
         transition: 'var(--transition-smooth)',
-        transform: isHovered ? 'scale(1.02)' : 'scale(1)',
-        borderColor: isHovered ? 'var(--accent-primary)' : 'var(--glass-border)',
-        boxShadow: isHovered ? '0 20px 60px -15px rgba(0, 242, 255, 0.15)' : 'none'
+        transform: isHovered ? 'translateY(-10px)' : 'translateY(0)',
+        borderColor: isHovered ? 'rgba(165, 180, 252, 0.3)' : 'var(--glass-border)',
+        boxShadow: isHovered ? '0 30px 60px -15px rgba(165, 180, 252, 0.15)' : 'none'
       }}
     >
       <AnimatePresence>
@@ -55,25 +55,26 @@ function ProjectCard({ project, index }) {
             style={{ 
               position: 'absolute', 
               inset: 0, 
-              background: 'radial-gradient(circle at center, rgba(0, 242, 255, 0.05), transparent 70%)',
+              background: 'linear-gradient(135deg, rgba(165, 180, 252, 0.05), rgba(253, 164, 175, 0.05))',
               pointerEvents: 'none'
             }}
           />
         )}
       </AnimatePresence>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', position: 'relative' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', position: 'relative' }}>
         <motion.div 
           animate={isHovered ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
           style={{ 
-            width: 48, 
-            height: 48, 
-            borderRadius: 12, 
-            background: 'rgba(0, 242, 255, 0.1)', 
+            width: 52, 
+            height: 52, 
+            borderRadius: 14, 
+            background: 'rgba(255, 255, 255, 0.04)', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            color: 'var(--accent-primary)'
+            color: 'var(--accent-primary)',
+            border: '1px solid rgba(255, 255, 255, 0.08)'
           }}>
           {project.icon}
         </motion.div>
@@ -81,54 +82,55 @@ function ProjectCard({ project, index }) {
           fontFamily: 'var(--font-mono)', 
           fontSize: '0.65rem', 
           color: 'var(--text-muted)',
-          letterSpacing: '0.15em'
+          letterSpacing: '0.2em'
         }}>{project.num}</span>
       </div>
 
       <h3 style={{ 
         fontFamily: 'var(--font-serif)', 
-        fontSize: '1.85rem', 
+        fontSize: '2rem', 
         fontWeight: 400, 
-        marginBottom: '0.6rem',
+        marginBottom: '0.8rem',
         color: 'var(--text-main)',
-        position: 'relative'
+        position: 'relative',
+        letterSpacing: '-0.02em'
       }}>{project.title}</h3>
       
       <p style={{ 
         fontSize: '0.7rem', 
         textTransform: 'uppercase', 
-        letterSpacing: '0.15em', 
+        letterSpacing: '0.2em', 
         color: 'var(--accent-primary)', 
-        marginBottom: '1.5rem',
-        opacity: 0.9,
-        fontWeight: 500
+        marginBottom: '1.8rem',
+        opacity: 0.8,
+        fontWeight: 600
       }}>{project.status}</p>
 
       <p style={{ 
-        fontSize: '0.95rem', 
+        fontSize: '1.05rem', 
         color: 'var(--text-dim)', 
-        lineHeight: 1.7, 
-        marginBottom: '2.5rem',
+        lineHeight: 1.65, 
+        marginBottom: '3.5rem',
         fontWeight: 300
       }}>{project.desc}</p>
 
-      <div style={{ display: 'flex', gap: '0.7rem', flexWrap: 'wrap', marginBottom: '3rem' }}>
+      <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '3.5rem' }}>
         {project.tech.map(t => (
           <span key={t} style={{ 
             fontSize: '0.65rem', 
             fontFamily: 'var(--font-mono)', 
-            padding: '0.35rem 0.9rem', 
-            background: 'rgba(255,255,255,0.04)', 
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 8,
-            color: 'var(--text-dim)'
+            padding: '0.45rem 1rem', 
+            background: 'rgba(255, 255, 255, 0.03)', 
+            border: '1px solid rgba(255, 255, 255, 0.06)',
+            borderRadius: 100,
+            color: 'var(--text-dim)',
           }}>{t}</span>
         ))}
       </div>
 
-      <div style={{ paddingTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.05)", position: 'relative' }}>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--accent-primary)", display: "block", marginBottom: "0.5rem", opacity: 0.7 }}>Key Insight</span>
-        <p style={{ fontSize: "0.9rem", color: "rgba(0, 242, 255, 0.6)", lineHeight: 1.6, fontStyle: "italic" }}>"{project.insight}"</p>
+      <div style={{ paddingTop: '2rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent-secondary)", display: "block", marginBottom: "0.6rem", opacity: 0.7 }}>Key Insight</span>
+        <p style={{ fontSize: "1rem", color: "var(--accent-secondary)", lineHeight: 1.5, fontStyle: "italic", fontWeight: 300, opacity: 0.8 }}>"{project.insight}"</p>
       </div>
     </motion.div>
   );
@@ -136,39 +138,28 @@ function ProjectCard({ project, index }) {
 
 export function Work() {
   return (
-    <section id="work" style={{ padding: '12rem 2.5rem', position: 'relative', zIndex: 2 }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-        <div style={{ maxWidth: 760, marginBottom: '6rem' }}>
+    <section id="work" style={{ padding: '14rem 2.5rem', position: 'relative', zIndex: 2 }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ maxWidth: 760, marginBottom: '7rem' }}>
           <SectionLabel>Selected Work</SectionLabel>
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            style={{ 
-              fontFamily: 'var(--font-serif)', 
-              fontSize: 'clamp(2.8rem, 6vw, 4rem)', 
-              fontWeight: 400, 
-              lineHeight: 1.05, 
-              letterSpacing: '-0.02em', 
-              marginBottom: '1.8rem' 
-            }}
-          >Engineering Intelligence</motion.h2>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            style={{ color: 'var(--text-dim)', fontSize: '1.2rem', fontWeight: 300, lineHeight: 1.6 }}
-          >
-            A curated selection of technical experiments in reinforcement learning and infrastructure for low-resource AI.
-          </motion.p>
+          <h2 style={{ 
+            fontFamily: 'var(--font-serif)', 
+            fontSize: 'clamp(3.2rem, 7vw, 4.8rem)', 
+            fontWeight: 400, 
+            lineHeight: 1.0, 
+            letterSpacing: '-0.04em', 
+            marginBottom: '2rem',
+            color: 'var(--text-main)'
+          }}>Engineering Systems</h2>
+          <p style={{ color: 'var(--text-dim)', fontSize: '1.25rem', fontWeight: 300, lineHeight: 1.6, maxWidth: '600px' }}>
+            A focused exploration of intelligent systems and reinforcement learning architectures.
+          </p>
         </div>
         
         <div style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', 
-          gap: '2.5rem' 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(460px, 1fr))', 
+          gap: '3.5rem' 
         }}>
           {projects.map((p, i) => <ProjectCard key={p.num} project={p} index={i} />)}
         </div>

@@ -1,15 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap');
 
 :root {
-  --bg-dark: #020408;
-  --bg-card: rgba(10, 15, 25, 0.4);
-  --accent-primary: #00f2ff; /* Futuristic Cyan */
-  --accent-secondary: #70faff;
-  --text-main: rgba(240, 238, 248, 0.95);
-  --text-dim: rgba(122, 120, 138, 0.8);
-  --text-muted: rgba(122, 120, 138, 0.4);
-  --glass-border: rgba(0, 242, 255, 0.08); /* Cyan-tinted border */
-  --glass-glow: rgba(0, 242, 255, 0.05);
+  --bg-dark: #05060f;
+  --bg-card: rgba(15, 17, 30, 0.4);
+  --accent-primary: #a5b4fc; /* Periwinkle */
+  --accent-secondary: #fda4af; /* Muted Rose */
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+  --text-muted: rgba(148, 163, 184, 0.3);
+  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-glow: rgba(165, 180, 252, 0.04);
   
   --font-serif: 'DM Serif Display', serif;
   --font-sans: 'Inter', sans-serif;
@@ -26,16 +26,15 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--bg-dark);
 }
 
 body {
-  background: var(--bg-dark);
   color: var(--text-main);
   font-family: var(--font-sans);
   overflow-x: hidden;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  background: transparent;
 }
 
 ::-webkit-scrollbar {
@@ -47,7 +46,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 242, 255, 0.2);
+  background: rgba(165, 180, 252, 0.2);
   border-radius: 2px;
 }
 
@@ -59,16 +58,16 @@ a {
 
 .glass {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--glass-border);
   border-radius: 16px;
 }
 
 .section-label {
   font-family: var(--font-mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
   color: var(--accent-primary);
   opacity: 0.7;
@@ -77,7 +76,7 @@ a {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--text-main) 0%, var(--accent-primary) 100%);
+  background: linear-gradient(135deg, #f8fafc 0%, var(--accent-primary) 50%, var(--accent-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -90,5 +89,5 @@ a {
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 8s ease-in-out infinite;
 }

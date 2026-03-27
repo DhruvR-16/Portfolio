@@ -8,11 +8,11 @@ import './styles/globals.css';
 
 function App() {
   return (
-    <div style={{ position: 'relative', overflowX: 'hidden' }}>
+    <div style={{ position: 'relative', overflowX: 'hidden', background: 'transparent' }}>
       <ScrollProgress />
       <Starfield />
       <CursorGlow />
-      <main style={{ position: 'relative', zIndex: 2 }}>
+      <main style={{ position: 'relative', zIndex: 1 }}>
         <Hero />
         <Divider />
         <Work />
