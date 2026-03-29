@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { motion, useSpring, useMotionValue } from 'motion/react';
 import { Mail, Github, Linkedin, ArrowUpRight } from 'lucide-react';
 import { SectionLabel } from '../Shared/Shared';
 
@@ -43,9 +43,9 @@ function MagneticLink({ children, href }) {
 
 export function Contact() {
   const links = [
-    { label: "Email", value: "dhruv@example.com", href: "mailto:dhruv@example.com", icon: <Mail size={18} /> },
+    { label: "Email", value: "dhruvramani006@gmail.com", href: "dhruvramani006@gmail.com", icon: <Mail size={18} /> },
     { label: "GitHub", value: "github.com/DhruvR-16", href: "https://github.com/DhruvR-16", icon: <Github size={18} /> },
-    { label: "LinkedIn", value: "linkedin.com/in/dhruv", href: "#", icon: <Linkedin size={18} /> },
+    { label: "LinkedIn", value: "linkedin.com/in/dhruv-ramani1/", href: "https://www.linkedin.com/in/dhruv-ramani1/", icon: <Linkedin size={18} /> },
   ];
 
   return (
