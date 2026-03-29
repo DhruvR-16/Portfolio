@@ -16,8 +16,8 @@ export function Starfield() {
     
     const initStars = () => {
       stars = [];
-      // High density for unmistakable visibility
-      const count = Math.floor((window.innerWidth * window.innerHeight) / 1500); 
+      // Significantly lower density for a cleaner look and better performance
+      const count = Math.floor((window.innerWidth * window.innerHeight) / 8000); 
       for (let i = 0; i < count; i++) {
         stars.push({
           x: Math.random() * window.innerWidth,
@@ -66,11 +66,6 @@ export function Starfield() {
         const colorRgb = s.color === '#a5b4fc' ? '165, 180, 252' : '253, 164, 175';
         ctx.fillStyle = `rgba(${colorRgb}, ${pulse})`;
         ctx.fill();
-        
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = s.color;
-        ctx.fill();
-        ctx.shadowBlur = 0;
       });
 
       if (Math.random() < 0.045) createShootingStar();

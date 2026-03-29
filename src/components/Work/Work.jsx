@@ -63,8 +63,7 @@ function ProjectCard({ project, index }) {
       </AnimatePresence>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', position: 'relative' }}>
-        <motion.div 
-          animate={isHovered ? { scale: 1.1, rotate: 5 } : { scale: 1, rotate: 0 }}
+        <div 
           style={{ 
             width: 52, 
             height: 52, 
@@ -77,7 +76,7 @@ function ProjectCard({ project, index }) {
             border: '1px solid rgba(255, 255, 255, 0.08)'
           }}>
           {project.icon}
-        </motion.div>
+        </div>
         <span style={{ 
           fontFamily: 'var(--font-mono)', 
           fontSize: '0.65rem', 
