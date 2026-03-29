@@ -1,14 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Starfield, CursorGlow, Divider, ScrollProgress, BackgroundPlanets, TopNav } from './components/Shared/Shared';
 import { Hero } from './components/Hero/Hero';
 import { Work } from './components/Work/Work';
-import { Photography } from './components/Photography/Photography';
+import { TechStack } from './components/TechStack/TechStack';
 import { Thinking } from './components/Thinking/Thinking';
 import { Contact } from './components/Contact/Contact';
 import './styles/globals.css';
 
 function App() {
+  useEffect(() => {
+    // Prevent the browser from restoring the previous scroll position
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    // Always start at the top
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div style={{ position: 'relative', overflowX: 'hidden', background: 'transparent' }}>
       <ScrollProgress />
@@ -26,7 +35,7 @@ function App() {
         <Divider />
         <Work />
         <Divider />
-        <Photography />
+        <TechStack />
         <Divider />
         <Thinking />
         <Divider />

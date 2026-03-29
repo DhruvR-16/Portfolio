@@ -16,7 +16,6 @@ export function Starfield() {
     
     const initStars = () => {
       stars = [];
-      // Significantly lower density for a cleaner look and better performance
       const count = Math.floor((window.innerWidth * window.innerHeight) / 8000); 
       for (let i = 0; i < count; i++) {
         stars.push({
@@ -43,9 +42,9 @@ export function Starfield() {
     const createShootingStar = () => {
       shootingStars.push({
         x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height * 0.9,
-        len: Math.random() * 160 + 100,
-        speed: Math.random() * 4 + 3, // Slower shooting stars
+        y: Math.random() * canvas.height * 0.7,
+        len: Math.random() * 160 + 200,
+        speed: Math.random() * 4 + 1, //  speed of shooting stars
         angle: Math.PI * 0.75 + (Math.random() - 0.5) * 0.6,
         life: 0,
         color: Math.random() > 0.5 ? '#a5b4fc' : '#fda4af'
@@ -68,8 +67,8 @@ export function Starfield() {
         ctx.fill();
       });
 
-      // Very low frequency for shooting stars
-      if (Math.random() < 0.0005) createShootingStar();
+      //frequency for shooting stars
+      if (Math.random() < 0.005) createShootingStar();
       
       for (let i = shootingStars.length - 1; i >= 0; i--) {
         const s = shootingStars[i];
@@ -129,12 +128,21 @@ export function CursorGlow() {
   const dotRef = useRef(null);
   const pos = useRef({ x: -300, y: -300 });
   const [isHovering, setIsHovering] = useState(false);
+  const [isNavHovering, setIsNavHovering] = useState(false);
 
   useEffect(() => {
     const move = (e) => { pos.current = { x: e.clientX, y: e.clientY }; };
     const handleOver = (e) => {
-      if (e.target.closest('a, button, .glass')) setIsHovering(true);
-      else setIsHovering(false);
+      if (e.target.closest('.nav-item')) {
+        setIsNavHovering(true);
+        setIsHovering(false);
+      } else if (e.target.closest('a, button, .glass')) {
+        setIsHovering(true);
+        setIsNavHovering(false);
+      } else {
+        setIsHovering(false);
+        setIsNavHovering(false);
+      }
     };
 
     window.addEventListener('mousemove', move);
@@ -144,9 +152,12 @@ export function CursorGlow() {
     const tick = () => {
       if (glowRef.current) {
         glowRef.current.style.transform = `translate(${pos.current.x - 150}px, ${pos.current.y - 150}px)`;
+        // Fade out the big glow completely when hovering navbar
+        glowRef.current.style.opacity = isNavHovering ? '0' : '1';
       }
       if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${pos.current.x - 4}px, ${pos.current.y - 4}px) scale(${isHovering ? 2.5 : 1})`;
+        dotRef.current.style.transform = `translate(${pos.current.x - 4}px, ${pos.current.y - 4}px) scale(${isHovering ? 2.5 : (isNavHovering ? 0 : 1)})`;
+        dotRef.current.style.opacity = isNavHovering ? '0' : '1';
       }
       id = requestAnimationFrame(tick);
     };
@@ -156,12 +167,12 @@ export function CursorGlow() {
       window.removeEventListener('mousemove', move);
       window.removeEventListener('mouseover', handleOver);
     };
-  }, [isHovering]);
+  }, [isHovering, isNavHovering]);
 
   return (
     <>
-      <div ref={glowRef} style={{ position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(165,180,252,0.1) 0%, transparent 70%)', zIndex: 1, pointerEvents: 'none', willChange: 'transform', top: 0, left: 0 }} />
-      <div ref={dotRef} style={{ position: 'fixed', width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-primary)', zIndex: 9999, pointerEvents: 'none', willChange: 'transform', top: 0, left: 0, transition: 'transform 0.2s ease, background 0.3s ease' }} />
+      <div ref={glowRef} style={{ position: 'fixed', width: 300, height: 300, borderRadius: '50%', background: 'radial-gradient(circle, rgba(165,180,252,0.1) 0%, transparent 70%)', zIndex: 1, pointerEvents: 'none', willChange: 'transform, opacity', top: 0, left: 0, transition: 'opacity 0.2s ease' }} />
+      <div ref={dotRef} style={{ position: 'fixed', width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-primary)', zIndex: 9999, pointerEvents: 'none', willChange: 'transform, opacity', top: 0, left: 0, transition: 'transform 0.2s ease, opacity 0.2s ease, background 0.3s ease' }} />
     </>
   );
 }
@@ -235,26 +246,32 @@ export function TopNav() {
         transition={{ duration: 0.3 }}
         style={{
           display: 'flex',
-          gap: '2rem',
-          padding: '0.8rem 2rem',
+          gap: '0.5rem',
+          padding: '0.4rem',
           borderRadius: '100px',
           pointerEvents: 'auto',
           boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)'
         }}
       >
-        {['hero', 'work', 'photography', 'thinking', 'contact'].map(item => (
+        {['hero', 'work', 'tech', 'thinking', 'contact'].map(item => (
           <motion.a
+            className="nav-item"
             key={item}
             href={`#${item}`}
-            whileHover={{ color: '#ffffff' }}
+            whileHover={{ 
+              color: '#ffffff',
+              background: 'rgba(255, 255, 255, 0.1)'
+            }}
             style={{
+              padding: '0.6rem 1.2rem',
+              borderRadius: '100px',
               color: 'var(--text-dim)',
               textTransform: 'uppercase',
               fontSize: '0.7rem',
               letterSpacing: '0.15em',
               fontFamily: 'var(--font-mono)',
               textDecoration: 'none',
-              transition: 'color 0.3s ease'
+              transition: 'color 0.3s ease, background 0.3s ease'
             }}
           >
             {item === 'hero' ? 'Home' : item}
