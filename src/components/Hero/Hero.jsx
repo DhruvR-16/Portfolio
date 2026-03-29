@@ -77,12 +77,12 @@ export function Hero() {
             marginBottom: "4.5rem", 
             fontWeight: 300 
           }}>
-            I explore intelligence — reinforcement learning, decision systems, and ideas that might actually matter. Also: the night sky through a lens.
+            I explore intelligence — reinforcement learning, deep learning, and ideas that might actually matter.
           </p>
         </motion.div>
 
         <motion.div variants={itemVariants} style={{ display: "flex", gap: "1.2rem", flexWrap: "wrap" }}>
-          {["Reinforcement Learning", "Decision Systems", "Astrophotography"].map(tag => (
+          {["Machine Learning","Reinforcement Learning",].map(tag => (
             <motion.span 
               key={tag} 
               whileHover={{ 

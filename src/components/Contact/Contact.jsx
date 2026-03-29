@@ -1,5 +1,4 @@
-import { useRef } from 'react';
-import { motion, useSpring, useMotionValue } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Mail, Github, Linkedin, ArrowUpRight } from 'lucide-react';
 import { SectionLabel } from '../Shared/Shared';
 

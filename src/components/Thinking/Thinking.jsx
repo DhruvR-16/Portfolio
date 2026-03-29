@@ -10,17 +10,17 @@ const topics = [
 
 export function Thinking() {
   return (
-    <section id="thinking" style={{ padding: '10rem 2.5rem', position: 'relative', zIndex: 2 }}>
+    <section id="thinking" style={{ padding: '6rem 2.5rem', position: 'relative', zIndex: 2 }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <SectionLabel>Thinking</SectionLabel>
         <h2 style={{ 
           fontFamily: 'var(--font-serif)', 
-          fontSize: 'clamp(2.4rem, 5vw, 3.5rem)', 
+          fontSize: 'clamp(2rem, 4vw, 3rem)', 
           fontWeight: 400, 
           color: 'var(--text-main)', 
           lineHeight: 1.05, 
           letterSpacing: '-0.02em', 
-          marginBottom: '3.5rem' 
+          marginBottom: '2.5rem' 
         }}>What's in my head</h2>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
@@ -32,33 +32,33 @@ export function Thinking() {
               viewport={{ once: true }}
               transition={{ duration: 1, delay: i * 0.1 }}
               style={{ 
-                padding: '2.5rem 0', 
+                padding: '2rem 0', 
                 borderBottom: '1px solid rgba(166, 156, 132, 0.1)', 
                 display: 'flex', 
-                gap: '3rem', 
+                gap: '2rem', 
                 alignItems: 'flex-start',
                 cursor: 'default',
               }}
             >
               <span style={{ 
                 fontFamily: 'var(--font-mono)', 
-                fontSize: '0.65rem', 
+                fontSize: '0.6rem', 
                 color: 'var(--accent-primary)', 
                 letterSpacing: '0.2em', 
-                minWidth: 32, 
-                paddingTop: '0.4rem',
+                minWidth: 28, 
+                paddingTop: '0.3rem',
                 opacity: 0.4
               }}>0{i + 1}</span>
               <div>
                 <h3 style={{ 
-                  fontSize: '1.3rem', 
+                  fontSize: '1.15rem', 
                   fontWeight: 400, 
                   color: 'var(--text-main)', 
-                  marginBottom: '0.6rem', 
+                  marginBottom: '0.5rem', 
                   lineHeight: 1.2,
                 }}>{item.topic}</h3>
                 <p style={{ 
-                  fontSize: '0.95rem', 
+                  fontSize: '0.9rem', 
                   color: 'var(--text-dim)', 
                   lineHeight: 1.6,
                   fontWeight: 300,

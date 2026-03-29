@@ -5,29 +5,25 @@ const techCategories = [
   {
     category: "Languages",
     skills: [
-      { name: "Python", icon: "🐍" },
-      { name: "C++", icon: "⚡" },
-      { name: "JavaScript / TypeScript", icon: "🌐" },
-      { name: "SQL", icon: "🗄️" }
+      { name: "Python", iconSlug: "python" },
+      { name: "JS / TS", iconSlug: "javascript" },
     ]
   },
   {
     category: "AI & ML",
     skills: [
-      { name: "PyTorch", icon: "🔥" },
-      { name: "TensorFlow", icon: "🧠" },
-      { name: "Scikit-Learn", icon: "📊" },
-      { name: "CUDA", icon: "⚙️" },
-      { name: "OpenCV", icon: "👁️" }
+      { name: "PyTorch", iconSlug: "pytorch" },
+      { name: "TensorFlow", iconSlug: "tensorflow" },
+      { name: "Scikit-Learn", iconSlug: "scikitlearn" },
+      { name: "OpenCV", iconSlug: "opencv" }
     ]
   },
   {
     category: "Systems & Web",
     skills: [
-      { name: "React", icon: "⚛️" },
-      { name: "Node.js", icon: "🟢" },
-      { name: "Docker", icon: "🐋" },
-      { name: "Git", icon: "📦" }
+      { name: "React", iconSlug: "react" },
+      { name: "Node.js", iconSlug: "nodedotjs" },
+      { name: "Git", iconSlug: "git" }
     ]
   }
 ];
@@ -87,8 +83,8 @@ export function TechStack() {
               
               <div style={{ 
                 display: 'grid', 
-                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', 
-                gap: '1rem' 
+                gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', 
+                gap: '0.8rem' 
               }}>
                 {group.skills.map((skill, i) => (
                   <motion.div
@@ -100,19 +96,19 @@ export function TechStack() {
                     whileHover={{ y: -3, background: 'rgba(255, 255, 255, 0.08)' }}
                     className="glass"
                     style={{ 
-                      padding: '1.2rem 1.5rem', 
+                      padding: '0.8rem 1rem', 
                       display: 'flex', 
                       alignItems: 'center', 
-                      gap: '1rem',
+                      gap: '0.8rem',
                       background: 'rgba(255, 255, 255, 0.03)',
                       border: '1px solid rgba(255, 255, 255, 0.05)',
-                      borderRadius: 16,
+                      borderRadius: 12,
                       cursor: 'default',
                       transition: 'background 0.3s ease, border-color 0.3s ease'
                     }}
                   >
-                    <span style={{ fontSize: '1.4rem' }}>{skill.icon}</span>
-                    <span style={{ color: 'var(--text-main)', fontSize: '0.95rem', fontWeight: 400 }}>{skill.name}</span>
+                    <img src={`https://cdn.simpleicons.org/${skill.iconSlug}/ffffff`} alt={skill.name} style={{ width: 18, height: 18, opacity: 0.9 }} />
+                    <span style={{ color: 'var(--text-main)', fontSize: '0.9rem', fontWeight: 400 }}>{skill.name}</span>
                   </motion.div>
                 ))}
               </div>

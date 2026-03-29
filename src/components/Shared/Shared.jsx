@@ -253,7 +253,7 @@ export function TopNav() {
           boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)'
         }}
       >
-        {['hero', 'work', 'tech', 'thinking', 'contact'].map(item => (
+        {['hero', 'Projects', 'tech', 'contact'].map(item => (
           <motion.a
             className="nav-item"
             key={item}
@@ -282,6 +282,14 @@ export function TopNav() {
   );
 }
 
+// Static stars spread throughout the document vertically (0 to 100%)
+const INITIAL_STARS = Array.from({ length: 100 }).map(() => ({
+  top: Math.random() * 100,
+  left: Math.random() * 100,
+  size: Math.random() * 3 + 1,
+  opacity: Math.random() * 0.5 + 0.2
+}));
+
 export function BackgroundPlanets() {
   const planets = [
     // Mercury
@@ -302,17 +310,9 @@ export function BackgroundPlanets() {
     { top: 96, left: 15, size: 95, delay: 0.8, style: { background: 'radial-gradient(circle at 30% 30%, #3e66bb, #0b1a38)' }, hasRing: false }
   ];
 
-  // Static stars spread throughout the document vertically (0 to 100%)
-  const staticStars = Array.from({ length: 100 }).map((_, i) => ({
-    top: Math.random() * 100,
-    left: Math.random() * 100,
-    size: Math.random() * 3 + 1,
-    opacity: Math.random() * 0.5 + 0.2
-  }));
-
   return (
     <div style={{ position: 'absolute', width: '100vw', height: '100%', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-      {staticStars.map((s, i) => (
+      {INITIAL_STARS.map((s, i) => (
         <div key={`star-${i}`} style={{
           position: 'absolute',
           top: s.top + '%',

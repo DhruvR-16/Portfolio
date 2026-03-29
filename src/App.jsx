@@ -37,7 +37,6 @@ function App() {
         <Divider />
         <TechStack />
         <Divider />
-        <Thinking />
         <Divider />
         <Contact />
       </motion.main>
