@@ -15,13 +15,13 @@ export function Thinking() {
         <SectionLabel>Thinking</SectionLabel>
         <h2 style={{ 
           fontFamily: 'var(--font-serif)', 
-          fontSize: 'clamp(2.8rem, 6vw, 4rem)', 
+          fontSize: 'clamp(2.4rem, 5vw, 3.5rem)', 
           fontWeight: 400, 
           color: 'var(--text-main)', 
           lineHeight: 1.05, 
           letterSpacing: '-0.02em', 
           marginBottom: '3.5rem' 
-        }}>Curiosity Lab</h2>
+        }}>What's in my head</h2>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {topics.map((item, i) => (

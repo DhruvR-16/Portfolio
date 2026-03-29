@@ -45,7 +45,7 @@ export function Starfield() {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height * 0.9,
         len: Math.random() * 160 + 100,
-        speed: Math.random() * 20 + 14,
+        speed: Math.random() * 4 + 3, // Slower shooting stars
         angle: Math.PI * 0.75 + (Math.random() - 0.5) * 0.6,
         life: 0,
         color: Math.random() > 0.5 ? '#a5b4fc' : '#fda4af'
@@ -68,7 +68,8 @@ export function Starfield() {
         ctx.fill();
       });
 
-      if (Math.random() < 0.045) createShootingStar();
+      // Very low frequency for shooting stars
+      if (Math.random() < 0.0005) createShootingStar();
       
       for (let i = shootingStars.length - 1; i >= 0; i--) {
         const s = shootingStars[i];
@@ -197,4 +198,155 @@ export function SectionLabel({ children }) {
 
 export function Divider() {
   return <div style={{ height: 1, background: 'rgba(255,255,255,0.05)', margin: '0 auto', maxWidth: 760 }} />;
+}
+
+export function TopNav() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <motion.nav
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        padding: '1.5rem',
+        zIndex: 50,
+        pointerEvents: 'none'
+      }}
+    >
+      <motion.div 
+        animate={{ 
+          background: scrolled ? 'rgba(15, 15, 26, 0.7)' : 'rgba(15, 15, 26, 0.2)',
+          border: scrolled ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(255, 255, 255, 0.05)',
+          backdropFilter: scrolled ? 'blur(12px)' : 'blur(4px)'
+        }}
+        transition={{ duration: 0.3 }}
+        style={{
+          display: 'flex',
+          gap: '2rem',
+          padding: '0.8rem 2rem',
+          borderRadius: '100px',
+          pointerEvents: 'auto',
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)'
+        }}
+      >
+        {['hero', 'work', 'photography', 'thinking', 'contact'].map(item => (
+          <motion.a
+            key={item}
+            href={`#${item}`}
+            whileHover={{ color: '#ffffff' }}
+            style={{
+              color: 'var(--text-dim)',
+              textTransform: 'uppercase',
+              fontSize: '0.7rem',
+              letterSpacing: '0.15em',
+              fontFamily: 'var(--font-mono)',
+              textDecoration: 'none',
+              transition: 'color 0.3s ease'
+            }}
+          >
+            {item === 'hero' ? 'Home' : item}
+          </motion.a>
+        ))}
+      </motion.div>
+    </motion.nav>
+  );
+}
+
+export function BackgroundPlanets() {
+  const planets = [
+    // Mercury
+    { top: 6, right: 15, size: 50, delay: 2.5, style: { background: 'radial-gradient(circle at 30% 30%, #9e9e9e, #333333)' }, hasRing: false },
+    // Venus
+    { top: 18, left: 10, size: 85, delay: 0.5, style: { background: 'radial-gradient(circle at 30% 30%, #e3bb76, #8c6a3f)' }, hasRing: false },
+    // Earth
+    { top: 28, right: 25, size: 90, delay: 0, style: { background: 'radial-gradient(circle at 30% 30%, #4b9cd3, #152238)' }, hasRing: false },
+    // Mars
+    { top: 42, left: 18, size: 70, delay: 1.5, style: { background: 'radial-gradient(circle at 30% 30%, #c1440e, #451804)' }, hasRing: false },
+    // Jupiter
+    { top: 55, right: 12, size: 150, delay: 2, style: { background: 'linear-gradient(160deg, #d39c7e 0%, #c88b3a 20%, #90614d 40%, #c88b3a 60%, #eaddcf 80%, #90614d 100%)' }, hasRing: false },
+    // Saturn
+    { top: 72, left: 8, size: 120, delay: 1, style: { background: 'radial-gradient(circle at 30% 30%, #eaddcf, #a47c59)' }, hasRing: true, ringColor: '#eaddcf' },
+    // Uranus
+    { top: 85, right: 20, size: 100, delay: 1.2, style: { background: 'radial-gradient(circle at 30% 30%, #bce1e8, #4e808c)' }, hasRing: true, ringColor: 'rgba(188, 225, 232, 0.4)' },
+    // Neptune
+    { top: 96, left: 15, size: 95, delay: 0.8, style: { background: 'radial-gradient(circle at 30% 30%, #3e66bb, #0b1a38)' }, hasRing: false }
+  ];
+
+  // Static stars spread throughout the document vertically (0 to 100%)
+  const staticStars = Array.from({ length: 100 }).map((_, i) => ({
+    top: Math.random() * 100,
+    left: Math.random() * 100,
+    size: Math.random() * 3 + 1,
+    opacity: Math.random() * 0.5 + 0.2
+  }));
+
+  return (
+    <div style={{ position: 'absolute', width: '100vw', height: '100%', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
+      {staticStars.map((s, i) => (
+        <div key={`star-${i}`} style={{
+          position: 'absolute',
+          top: s.top + '%',
+          left: s.left + '%',
+          width: s.size + 'px',
+          height: s.size + 'px',
+          backgroundColor: '#fff',
+          borderRadius: '50%',
+          opacity: s.opacity,
+          boxShadow: `0 0 ${s.size * 2}px #fff`
+        }}></div>
+      ))}
+      {planets.map((p, i) => (
+        <motion.div
+          key={i}
+          style={{
+            position: 'absolute',
+            top: p.top + '%',
+            ...(p.left ? { left: p.left + '%' } : { right: p.right + '%' }),
+            width: p.size + 'px',
+            height: p.size + 'px',
+            borderRadius: '50%',
+            opacity: 0.8,
+            boxShadow: 'inset -10px -10px 20px rgba(0,0,0,0.8), 0 0 30px rgba(255,255,255,0.05)',
+            ...p.style
+          }}
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: [0, -15, 0], opacity: 0.85 }}
+          transition={{ 
+            y: { duration: 6 + i, repeat: Infinity, ease: 'easeInOut', delay: p.delay },
+            opacity: { duration: 2 }
+          }}
+        >
+          {p.hasRing && (
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '180%',
+              height: '40%',
+              border: `10px solid ${p.ringColor}`,
+              borderTop: 'none',
+              borderRadius: '50%',
+              transform: 'translate(-50%, -50%) rotate(20deg)',
+              opacity: 0.7,
+              boxShadow: `0 5px 10px rgba(0,0,0,0.5)`,
+              zIndex: 1
+            }} />
+          )}
+        </motion.div>
+      ))}
+    </div>
+  );
 }

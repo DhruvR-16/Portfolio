@@ -25,111 +25,73 @@ const projects = [
 ];
 
 function ProjectCard({ project, index }) {
-  const [isHovered, setIsHovered] = useState(false);
-
+  const [hovered, setHovered] = useState(false);
+  
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="glass"
-      style={{ 
-        padding: '3rem', 
-        position: 'relative', 
-        overflow: 'hidden',
-        transition: 'var(--transition-smooth)',
-        transform: isHovered ? 'translateY(-10px)' : 'translateY(0)',
-        borderColor: isHovered ? 'rgba(165, 180, 252, 0.3)' : 'var(--glass-border)',
-        boxShadow: isHovered ? '0 30px 60px -15px rgba(165, 180, 252, 0.15)' : 'none'
-      }}
     >
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{ 
-              position: 'absolute', 
-              inset: 0, 
-              background: 'linear-gradient(135deg, rgba(165, 180, 252, 0.05), rgba(253, 164, 175, 0.05))',
-              pointerEvents: 'none'
-            }}
-          />
-        )}
-      </AnimatePresence>
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2.5rem', position: 'relative' }}>
-        <div 
-          style={{ 
-            width: 52, 
-            height: 52, 
-            borderRadius: 14, 
-            background: 'rgba(255, 255, 255, 0.04)', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            color: 'var(--accent-primary)',
-            border: '1px solid rgba(255, 255, 255, 0.08)'
+      <div 
+        onMouseEnter={() => setHovered(true)} 
+        onMouseLeave={() => setHovered(false)}
+        style={{ 
+          padding: "2.2rem 2.4rem", 
+          border: `1px solid ${hovered ? "rgba(139,124,246,0.3)" : "rgba(255,255,255,0.06)"}`, 
+          borderRadius: 16, 
+          background: hovered ? "rgba(139,124,246,0.04)" : "rgba(15,15,26,0.5)", 
+          transition: "border-color 0.3s ease, background 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1)", 
+          transform: hovered ? "translateY(-3px)" : "translateY(0)", 
+          cursor: "default", 
+          position: "relative" 
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.4rem" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "rgba(139,124,246,0.45)", letterSpacing: "0.1em" }}>{project.num}</span>
+          <span style={{ 
+            fontFamily: "var(--font-mono)", 
+            fontSize: "0.6rem", 
+            letterSpacing: "0.12em", 
+            textTransform: "uppercase", 
+            padding: "0.2rem 0.7rem", 
+            borderRadius: 100, 
+            border: `1px solid ${project.status === "Completed" ? "rgba(100,220,140,0.25)" : "rgba(139,124,246,0.25)"}`, 
+            color: project.status === "Completed" ? "rgba(100,220,140,0.7)" : "rgba(139,124,246,0.6)" 
           }}>
-          {project.icon}
+            {project.status}
+          </span>
         </div>
-        <span style={{ 
-          fontFamily: 'var(--font-mono)', 
-          fontSize: '0.65rem', 
-          color: 'var(--text-muted)',
-          letterSpacing: '0.2em'
-        }}>{project.num}</span>
-      </div>
-
-      <h3 style={{ 
-        fontFamily: 'var(--font-serif)', 
-        fontSize: '2rem', 
-        fontWeight: 400, 
-        marginBottom: '0.8rem',
-        color: 'var(--text-main)',
-        position: 'relative',
-        letterSpacing: '-0.02em'
-      }}>{project.title}</h3>
-      
-      <p style={{ 
-        fontSize: '0.7rem', 
-        textTransform: 'uppercase', 
-        letterSpacing: '0.2em', 
-        color: 'var(--accent-primary)', 
-        marginBottom: '1.8rem',
-        opacity: 0.8,
-        fontWeight: 600
-      }}>{project.status}</p>
-
-      <p style={{ 
-        fontSize: '1.05rem', 
-        color: 'var(--text-dim)', 
-        lineHeight: 1.65, 
-        marginBottom: '3.5rem',
-        fontWeight: 300
-      }}>{project.desc}</p>
-
-      <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginBottom: '3.5rem' }}>
-        {project.tech.map(t => (
-          <span key={t} style={{ 
-            fontSize: '0.65rem', 
-            fontFamily: 'var(--font-mono)', 
-            padding: '0.45rem 1rem', 
-            background: 'rgba(255, 255, 255, 0.03)', 
-            border: '1px solid rgba(255, 255, 255, 0.06)',
-            borderRadius: 100,
-            color: 'var(--text-dim)',
-          }}>{t}</span>
-        ))}
-      </div>
-
-      <div style={{ paddingTop: '2rem', borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}>
-        <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.25em", textTransform: "uppercase", color: "var(--accent-secondary)", display: "block", marginBottom: "0.6rem", opacity: 0.7 }}>Key Insight</span>
-        <p style={{ fontSize: "1rem", color: "var(--accent-secondary)", lineHeight: 1.5, fontStyle: "italic", fontWeight: 300, opacity: 0.8 }}>"{project.insight}"</p>
+        <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(1.3rem, 3vw, 1.65rem)", fontWeight: 400, color: "rgba(240,238,248,0.95)", lineHeight: 1.2, marginBottom: "0.85rem" }}>
+          {project.title}
+        </h3>
+        <p style={{ fontSize: "0.9rem", color: "rgba(122,120,138,0.85)", lineHeight: 1.7, marginBottom: "1.5rem", fontWeight: 300 }}>
+          {project.desc}
+        </p>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1.8rem" }}>
+          {project.tech.map(t => (
+            <span key={t} style={{ 
+              fontFamily: "var(--font-mono)", 
+              fontSize: "0.62rem", 
+              letterSpacing: "0.08em", 
+              color: "rgba(122,120,138,0.6)", 
+              padding: "0.2rem 0.6rem", 
+              background: "rgba(255,255,255,0.04)", 
+              borderRadius: 6 
+            }}>
+              {t}
+            </span>
+          ))}
+        </div>
+        <div style={{ paddingTop: "1.4rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(139,124,246,0.5)", display: "block", marginBottom: "0.45rem" }}>
+            Key Insight
+          </span>
+          <p style={{ fontSize: "0.85rem", color: "rgba(200,195,255,0.55)", lineHeight: 1.65, fontStyle: "italic" }}>
+            "{project.insight}"
+          </p>
+        </div>
       </div>
     </motion.div>
   );
@@ -137,29 +99,33 @@ function ProjectCard({ project, index }) {
 
 export function Work() {
   return (
-    <section id="work" style={{ padding: '14rem 2.5rem', position: 'relative', zIndex: 2 }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <div style={{ maxWidth: 760, marginBottom: '7rem' }}>
+    <section id="work" style={{ padding: "8rem 2.5rem", position: "relative", zIndex: 2 }}>
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
           <SectionLabel>Selected Work</SectionLabel>
-          <h2 style={{ 
-            fontFamily: 'var(--font-serif)', 
-            fontSize: 'clamp(3.2rem, 7vw, 4.8rem)', 
-            fontWeight: 400, 
-            lineHeight: 1.0, 
-            letterSpacing: '-0.04em', 
-            marginBottom: '2rem',
-            color: 'var(--text-main)'
-          }}>Engineering Systems</h2>
-          <p style={{ color: 'var(--text-dim)', fontSize: '1.25rem', fontWeight: 300, lineHeight: 1.6, maxWidth: '600px' }}>
-            A focused exploration of intelligent systems and reinforcement learning architectures.
-          </p>
-        </div>
+        </motion.div>
+
+        <motion.h2 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true }} 
+          transition={{ delay: 0.1 }}
+          style={{ fontFamily: 'var(--font-serif)', fontSize: "clamp(1.8rem, 4vw, 2.4rem)", fontWeight: 400, color: "rgba(240,238,248,0.95)", lineHeight: 1.1, letterSpacing: "-0.02em", marginBottom: "0.8rem" }}
+        >
+          Things I've built
+        </motion.h2>
+
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }} 
+          whileInView={{ opacity: 1, y: 0 }} 
+          viewport={{ once: true }} 
+          transition={{ delay: 0.2 }}
+          style={{ fontSize: "0.9rem", color: "rgba(122,120,138,0.7)", marginBottom: "3.5rem", lineHeight: 1.7 }}
+        >
+          Not the flashiest projects — but each one taught me something real.
+        </motion.p>
         
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fill, minmax(460px, 1fr))', 
-          gap: '3.5rem' 
-        }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
           {projects.map((p, i) => <ProjectCard key={p.num} project={p} index={i} />)}
         </div>
       </div>

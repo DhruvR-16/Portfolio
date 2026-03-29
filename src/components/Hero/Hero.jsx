@@ -55,7 +55,7 @@ export function Hero() {
         <motion.div variants={itemVariants} style={{ paddingRight: '3.5rem' }}>
           <h1 style={{ 
             fontFamily: "var(--font-serif)", 
-            fontSize: "clamp(3.8rem, 9vw, 7rem)", 
+            fontSize: "clamp(3rem, 7vw, 5.5rem)", 
             lineHeight: 1.2, 
             letterSpacing: "0.03em", 
             color: "var(--text-main)", 
@@ -70,7 +70,7 @@ export function Hero() {
 
         <motion.div variants={itemVariants}>
           <p style={{ 
-            fontSize: "clamp(1.1rem, 2.2vw, 1.4rem)", 
+            fontSize: "clamp(1rem, 1.8vw, 1.25rem)", 
             color: "var(--text-dim)", 
             maxWidth: 580, 
             lineHeight: 1.6, 
@@ -113,7 +113,7 @@ export function Hero() {
            animate={{ y: [0, 10, 0] }}
            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
         >
-          <div style={{ color: 'var(--accent-secondary)', opacity: 0.5, fontSize: '0.7rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>↓ Explore the craft</div>
+          <div style={{ color: 'var(--accent-secondary)', opacity: 0.5, fontSize: '0.7rem', letterSpacing: '0.22em', textTransform: 'uppercase' }}>↓ Scroll</div>
         </motion.div>
       </motion.div>
     </section>

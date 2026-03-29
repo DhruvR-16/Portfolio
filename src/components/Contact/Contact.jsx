@@ -1,40 +1,25 @@
 import { useRef } from 'react';
-import { motion, useSpring, useMotionValue } from 'motion/react';
+import { motion, useSpring, useMotionValue } from 'framer-motion';
 import { Mail, Github, Linkedin, ArrowUpRight } from 'lucide-react';
 import { SectionLabel } from '../Shared/Shared';
 
-function MagneticLink({ children, href }) {
-  const ref = useRef(null);
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const springConfig = { damping: 20, stiffness: 100 };
-  const x = useSpring(mouseX, springConfig);
-  const y = useSpring(mouseY, springConfig);
-
-  const handleMouseMove = (e) => {
-    const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
-    const centerX = left + width / 2;
-    const centerY = top + height / 2;
-    mouseX.set((clientX - centerX) * 0.5); // reduced effect for simplicity
-    mouseY.set((clientY - centerY) * 0.5);
-  };
-
-  const handleMouseLeave = () => {
-    mouseX.set(0);
-    mouseY.set(0);
-  };
-
+function SimpleLink({ children, href }) {
   return (
     <motion.a
-      ref={ref}
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ x, y, display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.8rem 0', borderBottom: '1px solid rgba(166, 156, 132, 0.1)', color: 'inherit' }}
+      initial="rest"
+      whileHover="hover"
+      animate="rest"
+      style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        padding: '1.8rem 0', 
+        borderBottom: '1px solid rgba(166, 156, 132, 0.1)', 
+        textDecoration: 'none'
+      }}
     >
       {children}
     </motion.a>
@@ -43,7 +28,7 @@ function MagneticLink({ children, href }) {
 
 export function Contact() {
   const links = [
-    { label: "Email", value: "dhruvramani006@gmail.com", href: "dhruvramani006@gmail.com", icon: <Mail size={18} /> },
+    { label: "Email", value: "dhruvramani006@gmail.com", href: "mailto:dhruvramani006@gmail.com", icon: <Mail size={18} /> },
     { label: "GitHub", value: "github.com/DhruvR-16", href: "https://github.com/DhruvR-16", icon: <Github size={18} /> },
     { label: "LinkedIn", value: "linkedin.com/in/dhruv-ramani1/", href: "https://www.linkedin.com/in/dhruv-ramani1/", icon: <Linkedin size={18} /> },
   ];
@@ -55,18 +40,18 @@ export function Contact() {
         <div style={{ marginBottom: '5rem' }}>
           <h2 style={{ 
             fontFamily: 'var(--font-serif)', 
-            fontSize: 'clamp(3.5rem, 8vw, 5.5rem)', 
+            fontSize: 'clamp(2.8rem, 6vw, 4.5rem)', 
             fontWeight: 400, 
             color: 'var(--text-main)', 
             lineHeight: 0.9, 
             letterSpacing: '-0.03em', 
             marginBottom: '2.5rem' 
           }}>
-            Building the <br />
-            <em className="gradient-text" style={{ fontStyle: 'italic', opacity: 0.9 }}>tomorrow.</em>
+            Let's think <br />
+            <em className="gradient-text" style={{ fontStyle: 'italic', opacity: 0.9 }}>together.</em>
           </h2>
           <p style={{ 
-            fontSize: '1.2rem', 
+            fontSize: '1.1rem', 
             color: 'var(--text-dim)', 
             maxWidth: 500, 
             lineHeight: 1.6, 
@@ -78,9 +63,14 @@ export function Contact() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
           {links.map((l) => (
-            <MagneticLink key={l.label} href={l.href}>
+            <SimpleLink key={l.label} href={l.href}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ color: 'var(--accent-primary)', opacity: 0.8 }}>{l.icon}</div>
+                <motion.div 
+                  variants={{ rest: { color: 'rgba(255, 255, 255, 0.4)' }, hover: { color: '#ffffff' } }} 
+                  transition={{ duration: 0.3 }}
+                >
+                  {l.icon}
+                </motion.div>
                 <div>
                   <span style={{ 
                     fontFamily: 'var(--font-mono)', 
@@ -92,11 +82,22 @@ export function Contact() {
                     marginBottom: '0.3rem',
                     opacity: 0.7
                   }}>{l.label}</span>
-                  <span style={{ fontSize: '1.2rem', color: 'var(--text-main)', fontWeight: 400 }}>{l.value}</span>
+                  <motion.span 
+                    variants={{ rest: { color: 'rgba(255, 255, 255, 0.6)' }, hover: { color: '#ffffff' } }}
+                    transition={{ duration: 0.3 }}
+                    style={{ fontSize: '1.1rem', fontWeight: 400 }}
+                  >
+                    {l.value}
+                  </motion.span>
                 </div>
               </div>
-              <ArrowUpRight size={20} style={{ color: 'var(--accent-primary)', opacity: 0.3 }} />
-            </MagneticLink>
+              <motion.div 
+                variants={{ rest: { opacity: 0.3, x: 0, color: 'rgba(255, 255, 255, 0.4)' }, hover: { opacity: 1, x: 5, color: '#ffffff' } }}
+                transition={{ duration: 0.3 }}
+              >
+                <ArrowUpRight size={20} />
+              </motion.div>
+            </SimpleLink>
           ))}
         </div>
 
