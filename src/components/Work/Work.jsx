@@ -24,31 +24,28 @@ const projects = [
   },
 ];
 
-function ProjectCard({ project, index }) {
+function ProjectCard({ project }) {
   const [hovered, setHovered] = useState(false);
   
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.8, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+    <div
+      onMouseEnter={() => setHovered(true)} 
+      onMouseLeave={() => setHovered(false)}
+      style={{ 
+        padding: "2.2rem 2.4rem", 
+        border: `1px solid ${hovered ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.15)"}`, 
+        borderRadius: 16, 
+        background: hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)", 
+        backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
+        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+        transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)", 
+        transform: hovered ? "translateY(-4px)" : "translateY(0)", 
+        cursor: "default", 
+        position: "relative" 
+      }}
     >
-      <div 
-        onMouseEnter={() => setHovered(true)} 
-        onMouseLeave={() => setHovered(false)}
-        style={{ 
-          padding: "2.2rem 2.4rem", 
-          border: `1px solid ${hovered ? "rgba(139,124,246,0.3)" : "rgba(255,255,255,0.06)"}`, 
-          borderRadius: 16, 
-          background: hovered ? "rgba(139,124,246,0.04)" : "rgba(15,15,26,0.5)", 
-          transition: "border-color 0.3s ease, background 0.3s ease, transform 0.3s cubic-bezier(0.16,1,0.3,1)", 
-          transform: hovered ? "translateY(-3px)" : "translateY(0)", 
-          cursor: "default", 
-          position: "relative" 
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.4rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.4rem" }}>
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "rgba(139,124,246,0.45)", letterSpacing: "0.1em" }}>{project.num}</span>
           <span style={{ 
             fontFamily: "var(--font-mono)", 
@@ -92,8 +89,7 @@ function ProjectCard({ project, index }) {
             "{project.insight}"
           </p>
         </div>
-      </div>
-    </motion.div>
+    </div>
   );
 }
 
@@ -126,7 +122,7 @@ export function Work() {
         </motion.p>
         
         <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
-          {projects.map((p, i) => <ProjectCard key={p.num} project={p} index={i} />)}
+          {projects.map((p) => <ProjectCard key={p.num} project={p} />)}
         </div>
       </div>
     </section>

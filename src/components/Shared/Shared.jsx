@@ -21,8 +21,8 @@ export function Starfield() {
         stars.push({
           x: Math.random() * window.innerWidth,
           y: Math.random() * window.innerHeight,
-          r: Math.random() * 2.0 + 0.4, // Clearly visible
-          baseAlpha: Math.random() * 0.6 + 0.4, 
+          r: Math.random() * 1.0 + 0.2, // Clearly visible
+          baseAlpha: Math.random() * 0.6 + 0.2, 
           speed: Math.random() * 0.005 + 0.002,
           phase: Math.random() * Math.PI * 2,
           color: Math.random() > 0.5 ? '#a5b4fc' : '#fda4af'
@@ -120,6 +120,78 @@ export function Starfield() {
         display: 'block'
       }} 
     />
+  );
+}
+
+export function ClickRipple() {
+  const [particles, setParticles] = useState([]);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      const clickId = Date.now();
+      const colors = [
+        '#a5b4fc', // soft indigo
+        '#c084fc', // cosmic purple
+        '#f472b6', // nebula pink
+        '#60a5fa', // bright stellar blue
+        '#ffffff', // pure starlight
+        '#818cf8', // ocean blue
+        '#fbbf24'  // faint sun yellow
+      ];
+      
+      // Create 8-12 particles per click
+      const particleCount = Math.floor(Math.random() * 5) + 7;
+      
+      const newParticles = Array.from({ length: particleCount }).map((_, i) => {
+        const angle = (Math.PI * 2 * i) / particleCount + (Math.random() * 0.5);
+        const distance = 40 + Math.random() * 70;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        return {
+          id: `${clickId}-${i}`,
+          x: e.clientX,
+          y: e.clientY,
+          tx: Math.cos(angle) * distance,
+          ty: Math.sin(angle) * distance,
+          size: 3 + Math.random() * 4,
+          color,
+          duration: 1.5 + Math.random() * 1.7
+        };
+      });
+      
+      setParticles((prev) => [...prev, ...newParticles]);
+      
+      setTimeout(() => {
+        setParticles((prev) => prev.filter(p => !p.id.startsWith(clickId.toString())));
+      }, 1000);
+    };
+
+    window.addEventListener('click', handleClick);
+    return () => window.removeEventListener('click', handleClick);
+  }, []);
+
+  return (
+    <>
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          initial={{ opacity: 1, scale: 1, x: p.x, y: p.y }}
+          animate={{ opacity: 0, scale: 0, x: p.x + p.tx, y: p.y + p.ty }}
+          transition={{ duration: p.duration, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            position: 'fixed',
+            top: -p.size / 2,
+            left: -p.size / 2,
+            width: p.size,
+            height: p.size,
+            borderRadius: '50%',
+            background: p.color,
+            boxShadow: `0 0 12px ${p.color}, 0 0 20px ${p.color}80, 0 0 2px #fff`,
+            pointerEvents: 'none',
+            zIndex: 9999,
+          }}
+        />
+      ))}
+    </>
   );
 }
 
@@ -292,18 +364,18 @@ const INITIAL_STARS = Array.from({ length: 100 }).map(() => ({
 
 export function BackgroundPlanets() {
   const planets = [
+    // Saturn
+    { top: 4, left: 8, size: 115, delay: 1, style: { background: 'radial-gradient(circle at 30% 30%, #eaddcf, #a47c59)' }, hasRing: true, ringColor: '#eaddcf' },
     // Mercury
     { top: 6, right: 15, size: 50, delay: 2.5, style: { background: 'radial-gradient(circle at 30% 30%, #9e9e9e, #333333)' }, hasRing: false },
     // Venus
     { top: 18, left: 10, size: 85, delay: 0.5, style: { background: 'radial-gradient(circle at 30% 30%, #e3bb76, #8c6a3f)' }, hasRing: false },
     // Earth
-    { top: 28, right: 25, size: 90, delay: 0, style: { background: 'radial-gradient(circle at 30% 30%, #4b9cd3, #152238)' }, hasRing: false },
+    { top: 28, right: 15, size: 90, delay: 0, style: { background: 'radial-gradient(circle at 30% 30%, #4b9cd3, #152238)' }, hasRing: false },
     // Mars
     { top: 42, left: 18, size: 70, delay: 1.5, style: { background: 'radial-gradient(circle at 30% 30%, #c1440e, #451804)' }, hasRing: false },
     // Jupiter
     { top: 55, right: 12, size: 150, delay: 2, style: { background: 'linear-gradient(160deg, #d39c7e 0%, #c88b3a 20%, #90614d 40%, #c88b3a 60%, #eaddcf 80%, #90614d 100%)' }, hasRing: false },
-    // Saturn
-    { top: 72, left: 8, size: 120, delay: 1, style: { background: 'radial-gradient(circle at 30% 30%, #eaddcf, #a47c59)' }, hasRing: true, ringColor: '#eaddcf' },
     // Uranus
     { top: 85, right: 20, size: 100, delay: 1.2, style: { background: 'radial-gradient(circle at 30% 30%, #bce1e8, #4e808c)' }, hasRing: true, ringColor: 'rgba(188, 225, 232, 0.4)' },
     // Neptune

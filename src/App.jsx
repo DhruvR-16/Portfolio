@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Starfield, CursorGlow, Divider, ScrollProgress, BackgroundPlanets, TopNav } from './components/Shared/Shared';
+import { Starfield, CursorGlow, ClickRipple, Divider, ScrollProgress, BackgroundPlanets, TopNav } from './components/Shared/Shared';
 import { Hero } from './components/Hero/Hero';
 import { Work } from './components/Work/Work';
 import { TechStack } from './components/TechStack/TechStack';
@@ -25,6 +25,7 @@ function App() {
       <Starfield />
       <BackgroundPlanets />
       <CursorGlow />
+      <ClickRipple />
       <motion.main 
         style={{ position: 'relative', zIndex: 1 }}
         initial={{ opacity: 0, y: 20 }}
