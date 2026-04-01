@@ -376,11 +376,11 @@ export function BackgroundPlanets() {
     // Mercury
     { top: 6, right: 15, size: 50, delay: 2.5, style: { background: 'radial-gradient(circle at 30% 30%, #9e9e9e, #333333)' }, hasRing: false },
     // Venus
-    { top: 18, left: 10, size: 85, delay: 0.5, style: { background: 'radial-gradient(circle at 30% 30%, #e3bb76, #8c6a3f)' }, hasRing: false },
+    { top: 20.4, left: 30, size: 85, delay: 0.5, style: { background: 'radial-gradient(circle at 30% 30%, #e3bb76, #8c6a3f)' }, hasRing: false },
     // Earth
     { top: 28, right: 15, size: 90, delay: 0, style: { background: 'radial-gradient(circle at 30% 30%, #4b9cd3, #152238)' }, hasRing: false },
     // Mars
-    { top: 42, left: 18, size: 70, delay: 1.5, style: { background: 'radial-gradient(circle at 30% 30%, #c1440e, #451804)' }, hasRing: false },
+    { top: 44, left: 15, size: 70, delay: 1.5, style: { background: 'radial-gradient(circle at 30% 30%, #c1440e, #451804)' }, hasRing: false },
     // Jupiter
     { top: 55, right: 12, size: 150, delay: 2, style: { background: 'linear-gradient(160deg, #d39c7e 0%, #c88b3a 20%, #90614d 40%, #c88b3a 60%, #eaddcf 80%, #90614d 100%)' }, hasRing: false },
     // Uranus

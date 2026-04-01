@@ -15,7 +15,7 @@ function SimpleLink({ children, href }) {
         display: 'flex', 
         justifyContent: 'space-between', 
         alignItems: 'center', 
-        padding: '1.8rem 0', 
+        padding: '1.3rem 0', 
         borderBottom: '1px solid rgba(166, 156, 132, 0.1)', 
         textDecoration: 'none'
       }}
@@ -34,13 +34,13 @@ export function Contact() {
 
   return (
     <section id="contact" style={{ 
-      padding: '10rem 2.5rem', 
-      position: 'relative', 
-      zIndex: 2, 
       minHeight: '100vh', 
       display: 'flex', 
       flexDirection: 'column', 
-      justifyContent: 'center' 
+      justifyContent: 'center', 
+      padding: '2rem 2.5rem', 
+      position: 'relative', 
+      zIndex: 2 
     }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <SectionLabel>Contact</SectionLabel>
@@ -52,7 +52,7 @@ export function Contact() {
             color: 'var(--text-main)', 
             lineHeight: 0.9, 
             letterSpacing: '-0.03em', 
-            marginBottom: '2.5rem' 
+            marginBottom: '2.0rem' 
           }}>
             Let's think <br />
             <em className="gradient-text" style={{ fontStyle: 'italic', opacity: 0.9 }}>together.</em>
@@ -108,9 +108,9 @@ export function Contact() {
           ))}
         </div>
 
-        <footer style={{ marginTop: '10rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(166, 156, 132, 0.1)', paddingTop: '3rem' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--accent-secondary)', textTransform: 'uppercase', opacity: 0.6 }}>Dhruv Ramani © 2025</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--accent-secondary)', textTransform: 'uppercase', opacity: 0.6 }}>Think Boldly</span>
+        <footer style={{ marginTop: '4rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(166, 156, 132, 0.1)', paddingTop: '2rem' }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--accent-secondary)', textTransform: 'uppercase', opacity: 0.6 }}>Dhruv Ramani © 2026</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.15em', color: 'var(--accent-secondary)', textTransform: 'uppercase', opacity: 0.6 }}>Think Uniquely</span>
         </footer>
       </div>
     </section>

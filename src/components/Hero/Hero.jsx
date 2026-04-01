@@ -23,7 +23,7 @@ const itemVariants = {
 export function Hero() {
   return (
     <section id="hero" style={{ 
-      minHeight: '100vh', 
+      minHeight: '105vh', 
       display: 'flex', 
       alignItems: 'center', 
       padding: '4rem 2.5rem', 
@@ -52,37 +52,37 @@ export function Hero() {
           </span>
         </motion.div>
 
-        <motion.div variants={itemVariants} style={{ paddingRight: '3.5rem' }}>
-          <h1 style={{ 
+        <motion.h1 
+          variants={itemVariants}
+          style={{ 
             fontFamily: "var(--font-serif)", 
-            fontSize: "clamp(3rem, 7vw, 5.5rem)", 
-            lineHeight: 1.2, 
-            letterSpacing: "0.03em", 
+            fontSize: "clamp(3rem, 8vw, 5.5rem)", 
+            fontWeight: 400, 
             color: "var(--text-main)", 
-            marginBottom: "2.5rem", 
-            fontWeight: 400,
-            whiteSpace: 'nowrap',
-          }}>
-            Dhruv<br />
-            <em style={{ fontStyle: "italic", opacity: 0.95, paddingRight: '1.2rem' }} className="gradient-text">Ramani</em>
-          </h1>
-        </motion.div>
+            lineHeight: 1.1, 
+            letterSpacing: "-0.02em",
+            marginBottom: "2rem" 
+          }}
+        >
+          <span style={{ fontSize: '0.75em' }}>Hi, I'm</span> <br />
+          Dhruv <em className="gradient-text" style={{ fontStyle: 'italic', paddingRight: '0.15em' }}>Ramani</em>
+        </motion.h1>
 
         <motion.div variants={itemVariants}>
           <p style={{ 
-            fontSize: "clamp(1rem, 1.8vw, 1.25rem)", 
+            fontSize: "clamp(1rem, 1.8vw, 1.20rem)", 
             color: "var(--text-dim)", 
-            maxWidth: 580, 
+            maxWidth: 650, 
             lineHeight: 1.6, 
             marginBottom: "4.5rem", 
             fontWeight: 300 
           }}>
-            I explore intelligence — reinforcement learning, deep learning, and ideas that might actually matter.
+            I enjoy building things and figuring out how they work. I work with Machine Learning and am currently exploring Reinforcement Learning through hands-on projects. Curious about astrophysics, and into photography in my free time.
           </p>
         </motion.div>
 
         <motion.div variants={itemVariants} style={{ display: "flex", gap: "1.2rem", flexWrap: "wrap" }}>
-          {["Machine Learning","Reinforcement Learning",].map(tag => (
+          {["Machine Learning","Reinforcement Learning", "Photography", "Always Curious and Learning"].map(tag => (
             <motion.span 
               key={tag} 
               whileHover={{ 
@@ -91,7 +91,7 @@ export function Hero() {
                 background: 'rgba(165, 180, 252, 0.08)' 
               }}
               style={{ 
-                fontSize: "0.7rem", 
+                fontSize:"0.7rem", 
                 letterSpacing: "0.15em", 
                 textTransform: "uppercase", 
                 color: "var(--accent-primary)", 

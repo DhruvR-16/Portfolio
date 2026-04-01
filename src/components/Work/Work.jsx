@@ -28,100 +28,170 @@ function ProjectCard({ project }) {
   const [hovered, setHovered] = useState(false);
   
   return (
-    <div
+    <motion.div
       onMouseEnter={() => setHovered(true)} 
       onMouseLeave={() => setHovered(false)}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8 }}
       style={{ 
-        padding: "2.2rem 2.4rem", 
-        border: `1px solid ${hovered ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.15)"}`, 
-        borderRadius: 16, 
-        background: hovered ? "rgba(255,255,255,0.1)" : "rgba(255,255,255,0.06)", 
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+        padding: "1.8rem 2rem", 
+        borderRadius: 20, 
+        background: hovered ? "rgba(255, 255, 255, 0.05)" : "rgba(255, 255, 255, 0.03)", 
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: `1px solid ${hovered ? 'rgba(165,180,252,0.2)' : 'rgba(255, 255, 255, 0.06)'}`,
         transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)", 
-        transform: hovered ? "translateY(-4px)" : "translateY(0)", 
+        transform: hovered ? "translateY(-5px)" : "translateY(0)", 
         cursor: "default", 
-        position: "relative" 
+        position: "relative",
+        overflow: "hidden",
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.4rem" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "rgba(139,124,246,0.45)", letterSpacing: "0.1em" }}>{project.num}</span>
+      <div style={{ position: 'relative', zIndex: 2, flex: 1 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+          <div style={{ 
+            width: 42, 
+            height: 42, 
+            borderRadius: 12, 
+            background: 'rgba(165,180,252,0.08)', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center',
+            color: hovered ? 'var(--accent-primary)' : 'rgba(165,180,252,0.6)',
+            border: `1px solid ${hovered ? 'rgba(165,180,252,0.3)' : 'rgba(165,180,252,0.1)'}`,
+            transition: 'all 0.4s ease',
+            boxShadow: hovered ? '0 0 15px rgba(165,180,252,0.2)' : 'none'
+          }}>
+            {project.icon}
+          </div>
           <span style={{ 
             fontFamily: "var(--font-mono)", 
-            fontSize: "0.6rem", 
-            letterSpacing: "0.12em", 
+            fontSize: "0.55rem", 
+            letterSpacing: "0.15em", 
             textTransform: "uppercase", 
-            padding: "0.2rem 0.7rem", 
-            borderRadius: 100, 
-            border: `1px solid ${project.status === "Completed" ? "rgba(100,220,140,0.25)" : "rgba(139,124,246,0.25)"}`, 
-            color: project.status === "Completed" ? "rgba(100,220,140,0.7)" : "rgba(139,124,246,0.6)" 
+            padding: "0.3rem 0.6rem", 
+            borderRadius: 6, 
+            background: "rgba(255,255,255,0.04)",
+            border: `1px solid rgba(255,255,255,0.08)`, 
+            color: "rgba(255,255,255,0.4)" 
           }}>
             {project.status}
           </span>
         </div>
-        <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(1.3rem, 3vw, 1.65rem)", fontWeight: 400, color: "rgba(240,238,248,0.95)", lineHeight: 1.2, marginBottom: "0.85rem" }}>
+
+        <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "1.35rem", fontWeight: 400, color: "var(--text-main)", lineHeight: 1.2, marginBottom: "0.8rem" }}>
           {project.title}
         </h3>
-        <p style={{ fontSize: "0.9rem", color: "rgba(122,120,138,0.85)", lineHeight: 1.7, marginBottom: "1.5rem", fontWeight: 300 }}>
+
+        <p style={{ fontSize: "0.9rem", color: "var(--text-dim)", lineHeight: 1.6, marginBottom: "1.8rem", fontWeight: 300 }}>
           {project.desc}
         </p>
-        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1.8rem" }}>
+
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "2rem" }}>
           {project.tech.map(t => (
             <span key={t} style={{ 
               fontFamily: "var(--font-mono)", 
-              fontSize: "0.62rem", 
-              letterSpacing: "0.08em", 
-              color: "rgba(122,120,138,0.6)", 
-              padding: "0.2rem 0.6rem", 
-              background: "rgba(255,255,255,0.04)", 
-              borderRadius: 6 
+              fontSize: "0.6rem", 
+              color: "rgba(255,255,255,0.35)", 
+              padding: "0.2rem 0.5rem", 
+              background: "rgba(255,255,255,0.02)", 
+              border: "1px solid rgba(255,255,255,0.04)",
+              borderRadius: 4 
             }}>
               {t}
             </span>
           ))}
         </div>
-        <div style={{ paddingTop: "1.4rem", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "rgba(139,124,246,0.5)", display: "block", marginBottom: "0.45rem" }}>
-            Key Insight
-          </span>
-          <p style={{ fontSize: "0.85rem", color: "rgba(200,195,255,0.55)", lineHeight: 1.65, fontStyle: "italic" }}>
-            "{project.insight}"
-          </p>
-        </div>
-    </div>
+      </div>
+
+      <div style={{ 
+        paddingTop: "1.2rem", 
+        borderTop: "1px solid rgba(255,255,255,0.05)",
+        marginTop: "auto"
+      }}>
+        <p style={{ fontSize: "0.8rem", color: "rgba(165,180,252,0.5)", lineHeight: 1.5, fontStyle: "italic", fontWeight: 300 }}>
+          <span style={{ color: 'var(--accent-primary)', opacity: 0.8, marginRight: '0.4rem' }}>◆</span>
+          {project.insight}
+        </p>
+      </div>
+
+      {/* Subtle Stellar Halo Effect */}
+      <motion.div 
+        animate={{ 
+          opacity: hovered ? 0.08 : 0,
+          scale: hovered ? 1.2 : 0.8
+        }}
+        style={{ 
+          position: 'absolute', 
+          top: '-10%', 
+          right: '-10%', 
+          width: '60%', 
+          height: '60%', 
+          background: 'radial-gradient(circle, var(--accent-primary) 0%, transparent 70%)',
+          zIndex: 0,
+          pointerEvents: 'none'
+        }} 
+      />
+    </motion.div>
   );
 }
 
 export function Work() {
   return (
-    <section id="work" style={{ padding: "8rem 2.5rem", position: "relative", zIndex: 2 }}>
-      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+    <section id="work" style={{ 
+      minHeight: "100vh", 
+      display: "flex", 
+      flexDirection: "column", 
+      justifyContent: "center", 
+      padding: "2rem 2.5rem", 
+      position: "relative", 
+      zIndex: 2 
+    }}>
+      <div style={{ maxWidth: 1000, margin: "0 auto" }}>
         <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-          <SectionLabel>Selected Work</SectionLabel>
         </motion.div>
 
-        <motion.h2 
-          initial={{ opacity: 0, y: 20 }} 
-          whileInView={{ opacity: 1, y: 0 }} 
-          viewport={{ once: true }} 
-          transition={{ delay: 0.1 }}
-          style={{ fontFamily: 'var(--font-serif)', fontSize: "clamp(1.8rem, 4vw, 2.4rem)", fontWeight: 400, color: "rgba(240,238,248,0.95)", lineHeight: 1.1, letterSpacing: "-0.02em", marginBottom: "0.8rem" }}
-        >
-          Things I've built
-        </motion.h2>
-
-        <motion.p 
-          initial={{ opacity: 0, y: 20 }} 
-          whileInView={{ opacity: 1, y: 0 }} 
-          viewport={{ once: true }} 
-          transition={{ delay: 0.2 }}
-          style={{ fontSize: "0.9rem", color: "rgba(122,120,138,0.7)", marginBottom: "3.5rem", lineHeight: 1.7 }}
-        >
-          Not the flashiest projects — but each one taught me something real.
-        </motion.p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem', flexWrap: 'wrap', gap: '2rem' }}>
+          <div style={{ maxWidth: 500 }}>
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }} 
+              whileInView={{ opacity: 1, y: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ delay: 0.1 }}
+              style={{ fontFamily: 'var(--font-serif)', fontSize: "clamp(2rem, 4vw, 2.8rem)", fontWeight: 400, color: "var(--text-main)", lineHeight: 1.1, letterSpacing: "-0.02em", marginBottom: "1rem" }}
+            >
+            <em className="gradient-text" style={{ fontStyle: 'italic' }}>Projects</em>
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }} 
+              whileInView={{ opacity: 1, y: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ delay: 0.2 }}
+              style={{ fontSize: "1rem", color: "var(--text-dim)", lineHeight: 1.6, fontWeight: 300 }}
+            >
+              A few projects I’ve been working on...
+            </motion.p>
+          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 0.4 }}
+            viewport={{ once: true }}
+            style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.2em', textTransform: 'uppercase' }}
+          >
+            [ Constellation Grid 1.0 ]
+          </motion.div>
+        </div>
         
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.4rem" }}>
+        <div style={{ 
+          display: "grid", 
+          gridTemplateColumns: "repeat(auto-fit, minmax(360px, 1fr))", 
+          gap: "1.5rem" 
+        }}>
           {projects.map((p) => <ProjectCard key={p.num} project={p} />)}
         </div>
       </div>
