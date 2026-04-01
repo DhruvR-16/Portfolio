@@ -6,19 +6,19 @@ import { SectionLabel } from '../Shared/Shared';
 const projects = [
   {
     num: "01",
-    title: "Healthcare AI Assistant",
-    desc: "Offline AI system designed for accessibility on low-end devices in resource-constrained environments.",
-    tech: ["Python", "ML", "Data Optimization"],
-    insight: "Real-world AI is limited more by hardware constraints than algorithm sophistication.",
-    status: "Completed",
+    title: "Mavis: AI Fitness Coach",
+    desc: "A real-time poise estimation and strict form coaching system that ensures perfect execution through geometric inference.",
+    tech: ["Python", "MediaPipe", "TensorFlow", "React"],
+    insight: "Dynamic calibration is the bridge between raw landmarks and meaningful human movement analysis.",
+    status: "In Progress",
     icon: <Cpu size={21} />
   },
   {
     num: "02",
-    title: "RL Exploration Framework",
-    desc: "A personal deep-dive into reward shaping and policy optimization for sparse-reward environments.",
-    tech: ["PyTorch", "Gymnasium", "Reinforcement Learning"],
-    insight: "Curiosity-driven exploration consistently outperforms random in low-data regimes.",
+    title: "Exoplanet Detection Pipeline",
+    desc: "An end-to-end ML application for detecting exoplanet transit signatures from raw TESS lightcurve data using Lightkurve and XGBoost.",
+    tech: ["Python", "Streamlit", "XGBoost", "Lightkurve", "Random Forest"],
+    insight: "Astronomical noise reduction is as much about understanding the instrument as it is about the signal.",
     status: "In Progress",
     icon: <Brain size={21} />
   },

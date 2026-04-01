@@ -4,7 +4,6 @@ import { Starfield, CursorGlow, ClickRipple, Divider, ScrollProgress, Background
 import { Hero } from './components/Hero/Hero';
 import { Work } from './components/Work/Work';
 import { TechStack } from './components/TechStack/TechStack';
-import { Thinking } from './components/Thinking/Thinking';
 import { Contact } from './components/Contact/Contact';
 import './styles/globals.css';
 

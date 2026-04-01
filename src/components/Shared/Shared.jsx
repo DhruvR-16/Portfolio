@@ -292,6 +292,13 @@ export function TopNav() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const navItems = [
+    { label: 'Home', id: 'hero' },
+    { label: 'Projects', id: 'work' },
+    { label: 'TechStack', id: 'tech' },
+    { label: 'Contact', id: 'contact' }
+  ];
+
   return (
     <motion.nav
       initial={{ y: -100, opacity: 0 }}
@@ -318,35 +325,35 @@ export function TopNav() {
         transition={{ duration: 0.3 }}
         style={{
           display: 'flex',
-          gap: '0.5rem',
+          gap: '0.2rem',
           padding: '0.4rem',
           borderRadius: '100px',
           pointerEvents: 'auto',
           boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)'
         }}
       >
-        {['hero', 'Projects', 'tech', 'contact'].map(item => (
+        {navItems.map(item => (
           <motion.a
             className="nav-item"
-            key={item}
-            href={`#${item}`}
+            key={item.id}
+            href={`#${item.id}`}
             whileHover={{ 
               color: '#ffffff',
               background: 'rgba(255, 255, 255, 0.1)'
             }}
             style={{
-              padding: '0.6rem 1.2rem',
+              padding: '0.6rem 1.1rem',
               borderRadius: '100px',
               color: 'var(--text-dim)',
               textTransform: 'uppercase',
-              fontSize: '0.7rem',
-              letterSpacing: '0.15em',
+              fontSize: '0.65rem',
+              letterSpacing: '0.12em',
               fontFamily: 'var(--font-mono)',
               textDecoration: 'none',
               transition: 'color 0.3s ease, background 0.3s ease'
             }}
           >
-            {item === 'hero' ? 'Home' : item}
+            {item.label}
           </motion.a>
         ))}
       </motion.div>

@@ -33,7 +33,15 @@ export function Contact() {
   ];
 
   return (
-    <section id="contact" style={{ padding: '12rem 2.5rem', position: 'relative', zIndex: 2 }}>
+    <section id="contact" style={{ 
+      padding: '10rem 2.5rem', 
+      position: 'relative', 
+      zIndex: 2, 
+      minHeight: '100vh', 
+      display: 'flex', 
+      flexDirection: 'column', 
+      justifyContent: 'center' 
+    }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <SectionLabel>Contact</SectionLabel>
         <div style={{ marginBottom: '5rem' }}>
