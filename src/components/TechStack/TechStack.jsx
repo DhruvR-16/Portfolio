@@ -48,7 +48,7 @@ export function TechStack() {
             marginBottom: '1.5rem' 
           }}
         >
-          Tools of the trade
+          Tech
         </motion.h2>
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
@@ -57,7 +57,7 @@ export function TechStack() {
           transition={{ duration: 0.8, delay: 0.1 }}
           style={{ color: 'var(--text-dim)', fontSize: '1.1rem', fontWeight: 300, marginBottom: '4rem', lineHeight: 1.6, maxWidth: 600 }}
         >
-          The frameworks and systems I use to build intelligence and translate research into reality.
+          The frameworks and languages I use.
         </motion.p>
 
         <div style={{ display: 'grid', gap: '4rem' }}>
