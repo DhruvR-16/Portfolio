@@ -65,7 +65,7 @@ export function Hero() {
           }}
         >
           <span style={{ fontSize: '0.75em' }}>Hi, I'm</span> <br />
-          Dhruv <em className="gradient-text" style={{ fontStyle: 'italic', paddingRight: '0.15em' }}>Ramani</em>
+          <em className="gradient-text" style={{ fontStyle: 'italic', paddingRight: '0.15em' }}>Dhruv Ramani</em>
         </motion.h1>
 
         <motion.div variants={itemVariants}>

@@ -55,7 +55,7 @@ export function TechStack() {
             marginBottom: '1.5rem' 
           }}
         >
-          Tech
+          <em className="gradient-text" style={{ fontStyle: 'italic' }}>TechStack</em>
         </motion.h2>
         <motion.p 
           initial={{ opacity: 0, y: 20 }}

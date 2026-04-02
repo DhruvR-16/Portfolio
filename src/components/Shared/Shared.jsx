@@ -42,10 +42,10 @@ export function Starfield() {
     const createShootingStar = () => {
       shootingStars.push({
         x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height * 0.7,
-        len: Math.random() * 160 + 200,
-        speed: Math.random() * 4 + 1, //  speed of shooting stars
-        angle: Math.PI * 0.75 + (Math.random() - 0.5) * 0.6,
+        y: Math.random() * canvas.height * 0.3, // Spawn in top 30%
+        len: Math.random() * 200 + 300,
+        speed: Math.random() * 8 + 6, //  speed of shooting stars
+        angle: Math.PI * 1.5 + (Math.random() - 0.5) * Math.PI * 0.25,
         life: 0,
         color: Math.random() > 0.5 ? '#a5b4fc' : '#fda4af'
       });
@@ -59,7 +59,7 @@ export function Starfield() {
       t += 0.012;
       
       stars.forEach((s) => {
-        const pulse = s.baseAlpha * (0.6 + 0.4 * Math.sin(t * s.speed * 40 + s.phase));
+        const pulse = s.baseAlpha * (0.4 + 0.6 * Math.abs(Math.sin(t * s.speed * 21000 + s.phase)));
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         const colorRgb = s.color === '#a5b4fc' ? '165, 180, 252' : '253, 164, 175';
@@ -68,11 +68,11 @@ export function Starfield() {
       });
 
       //frequency for shooting stars
-      if (Math.random() < 0.005) createShootingStar();
+      if (Math.random() < 0.00525) createShootingStar();
       
       for (let i = shootingStars.length - 1; i >= 0; i--) {
         const s = shootingStars[i];
-        s.life += 0.015;
+        s.life += 0.005;
         const opacity = Math.sin(Math.PI * s.life) * 1.0;
         
         ctx.beginPath();
@@ -362,11 +362,13 @@ export function TopNav() {
 }
 
 // Static stars spread throughout the document vertically (0 to 100%)
-const INITIAL_STARS = Array.from({ length: 100 }).map(() => ({
+const INITIAL_STARS = Array.from({ length: 350 }).map(() => ({
   top: Math.random() * 100,
   left: Math.random() * 100,
-  size: Math.random() * 3 + 1,
-  opacity: Math.random() * 0.5 + 0.2
+  size: Math.random() * 2.5 + 0.5,
+  opacity: Math.random() * 0.4 + 0.1,
+  duration: 1.85 + Math.random() * 3.8,
+  delay: Math.random() * 5
 }));
 
 export function BackgroundPlanets() {
@@ -392,17 +394,23 @@ export function BackgroundPlanets() {
   return (
     <div style={{ position: 'absolute', width: '100vw', height: '100%', top: 0, left: 0, overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
       {INITIAL_STARS.map((s, i) => (
-        <div key={`star-${i}`} style={{
-          position: 'absolute',
-          top: s.top + '%',
-          left: s.left + '%',
-          width: s.size + 'px',
-          height: s.size + 'px',
-          backgroundColor: '#fff',
-          borderRadius: '50%',
-          opacity: s.opacity,
-          boxShadow: `0 0 ${s.size * 2}px #fff`
-        }}></div>
+        <div 
+          key={`star-${i}`} 
+          className="animate-twinkle"
+          style={{
+            position: 'absolute',
+            top: s.top + '%',
+            left: s.left + '%',
+            width: s.size + 'px',
+            height: s.size + 'px',
+            backgroundColor: '#fff',
+            borderRadius: '50%',
+            opacity: s.opacity,
+            boxShadow: `0 0 ${s.size * 2.5}px #fff`,
+            animationDuration: `${s.duration}s`,
+            animationDelay: `${s.delay}s`
+          }}
+        ></div>
       ))}
       {planets.map((p, i) => (
         <motion.div
