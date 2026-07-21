@@ -48,7 +48,7 @@ export function Hero() {
             marginBottom: "2.5rem",
             opacity: 0.9
           }}>
-            B.Tech CS & AI Student · 2nd Year
+            B.Tech CS & AI Student · 3rd Year
           </span>
         </motion.div>
 
