@@ -7,7 +7,6 @@ export const cosmos = {
   fov: 1.75,
   roll: 0.18,
   bh: [0, 0],
-  planet: null,
 };
 
 export const DIST_END = 1.3;

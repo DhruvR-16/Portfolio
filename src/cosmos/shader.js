@@ -3,17 +3,21 @@ attribute vec2 aPos;
 void main(){ gl_Position = vec4(aPos, 0.0, 1.0); }
 `;
 
-// Scenes, blended by uW: x = black hole, y = nebula, z = planet, w = pulsar.
+// Scenes, blended by uW: x = black hole, y = nebula, z = planet sky, w = pulsar.
+// Planets are drawn on top, wherever the page puts a [data-planet] slot.
 // Black hole: photons integrated along Schwarzschild geodesics (units of r_s = 1)
 // around a Keplerian accretion disk, with an analytic photon ring and a soft glow.
 export const FRAG = `
 precision highp float;
 
 uniform vec2 uRes;
-uniform float uTime, uDist, uFall, uIncl, uFov, uRoll, uIntro, uLensE, uScroll, uRings, uStyle;
+uniform float uTime, uDist, uFall, uIncl, uFov, uRoll, uIntro, uLensE, uScroll;
 uniform vec2 uMouse, uCursor, uBH;
 uniform vec4 uW;
-uniform vec3 uPlanet, uAxis, uAtm, uPulsar;
+uniform vec3 uPulsar;
+// Up to four planets, drawn over every scene: centre xy, radius, opacity;
+// spin axis + style; atmosphere tint + rings.
+uniform vec4 uP[4], uPA[4], uPC[4];
 uniform vec3 uDiskHot, uDiskMid, uDiskCool, uGlow, uNeb1, uNeb2, uNeb3, uBeam;
 
 const float BC = 2.5980762; // critical impact parameter, 3*sqrt(3)/2 r_s
@@ -216,7 +220,7 @@ vec3 nebulaScene(vec2 uv){
   return c;
 }
 
-// ---------- planets: 0 = Mars, 1 = Jupiter, 2 = Uranus ----------
+// ---------- planets: 0 = Mars, 1 = Jupiter, 2 = Uranus, 3 = Neptune ----------
 
 float bandMask(float y, float a, float b){
   return smoothstep(a - 0.012, a + 0.012, y) * (1.0 - smoothstep(b - 0.012, b + 0.012, y));
@@ -275,6 +279,29 @@ vec3 uranusSurface(vec3 m, float lat){
   return mix(c, vec3(0.8, 0.96, 0.98), smoothstep(0.5, 0.92, lat) * 0.6);
 }
 
+vec3 neptuneSurface(vec3 m, vec3 n, float lat, vec3 axis){
+  float warp = fbm(m * 2.4 + vec3(0.0, 0.0, uTime * 0.015), 3.0) - 0.5;
+  float y = lat + warp * 0.06;
+  vec3 c = vec3(0.26, 0.46, 0.86) * (0.94 + 0.08 * sin(y * 10.0 + warp * 3.0));
+  // A darker band around the south polar region, and a paler equator.
+  c = mix(c, vec3(0.17, 0.3, 0.68), bandMask(y, -0.78, -0.55) * 0.7);
+  c = mix(c, vec3(0.34, 0.56, 0.92), (1.0 - smoothstep(0.0, 0.2, abs(y))) * 0.3);
+  // Bright methane-ice cirrus, stretched out by the fastest winds in the solar system.
+  float streak = fbm(vec3(m.x * 2.5, y * 36.0, m.z * 2.5), 3.0);
+  float belts = bandMask(y, 0.2, 0.36) + bandMask(y, -0.46, -0.3) * 0.7;
+  c = mix(c, vec3(0.9, 0.95, 1.0), smoothstep(0.6, 0.78, streak) * belts * 0.85);
+  // A dark storm near 20 degrees south with a bright companion cloud, kept on the
+  // visible face like Jupiter's Great Red Spot.
+  vec3 s = rotAxis(normalize(vec3(0.3, -0.34, 0.89)), axis, 0.2 * sin(uTime * 0.04));
+  vec3 east = normalize(cross(axis, s));
+  vec3 north = cross(s, east);
+  vec3 dv = n - s;
+  vec2 e = vec2(dot(dv, east) / 0.16, dot(dv, north) / 0.085);
+  c = mix(c, vec3(0.08, 0.14, 0.38), (1.0 - smoothstep(0.65, 1.0, length(e))) * 0.9);
+  float comp = 1.0 - smoothstep(0.2, 0.55, length((e - vec2(-0.1, -1.25)) * vec2(0.55, 1.6)));
+  return mix(c, vec3(0.95, 0.97, 1.0), comp * 0.85);
+}
+
 // A narrow ring, energy-conserving when it is thinner than a pixel.
 float thinRing(float rho, float r0, float w, float fp){
   float ww = max(w, fp);
@@ -289,32 +316,40 @@ float uranusRings(float rho, float fp){
   return d;
 }
 
-vec3 planetScene(vec2 uv){
+vec3 planetSky(vec2 uv){
   float pa = 1.0 / (uRes.y * 1.3);
   vec3 d = viewDir(uv, uTime * 0.004 + uScroll * 0.2);
-  vec3 col = starfield(d, pa) * 0.9 + deepSky(d) * 0.8;
+  return starfield(d, pa) * 0.9 + deepSky(d) * 0.8;
+}
 
-  float R = uPlanet.z;
-  vec2 q = (uv - uPlanet.xy) / R;
+// Draws one planet over whatever is behind it. P = centre xy, radius, opacity;
+// A = spin axis, style; C = atmosphere tint, rings.
+vec3 planet(vec3 bg, vec2 uv, vec4 P, vec4 A, vec4 C){
+  float R = max(P.z, 1e-4);
+  vec2 q = (uv - P.xy) / R;
   float r2 = dot(q, q);
+  float reach = C.w > 0.01 ? 2.1 : 1.7;
+  if (r2 > reach * reach) return bg;
   float rr = sqrt(r2);
   float px = 1.0 / (uRes.y * R);
   vec3 L = normalize(vec3(-0.62, 0.42, 0.66));
-  vec3 axis = normalize(uAxis);
+  vec3 axis = normalize(A.xyz);
+  float gas = step(0.5, A.w);
+  vec3 col = bg;
 
   float side = 0.3 + 0.7 * smoothstep(-0.5, 0.9, dot(q / max(rr, 1e-4), normalize(L.xy)));
-  col += uAtm * (exp(-max(rr - 1.0, 0.0) * 18.0) * 0.45 + exp(-max(rr - 1.0, 0.0) * 5.0) * 0.05) * side;
+  col += C.rgb * (exp(-max(rr - 1.0, 0.0) * 18.0) * 0.45 + exp(-max(rr - 1.0, 0.0) * 5.0) * 0.05) * side;
 
   // Rings in the equatorial plane, intersected in 3D (orthographic view along -z).
   float ringA = 0.0;
   vec3 ringC = vec3(0.0);
   float zr = -1000.0;
-  if (uRings > 0.01 && abs(axis.z) > 0.02){
+  if (C.w > 0.01 && abs(axis.z) > 0.02){
     zr = -(q.x * axis.x + q.y * axis.y) / axis.z;
     float rho = length(vec3(q, zr));
     float fp = px * 1.5 / max(abs(axis.z), 0.25);
     ringC = vec3(0.78, 0.8, 0.82) * (0.55 + 0.45 * abs(dot(axis, L)));
-    ringA = clamp(uranusRings(rho, fp), 0.0, 1.0) * uRings * 0.85;
+    ringA = clamp(uranusRings(rho, fp), 0.0, 1.0) * C.w * 0.85;
   }
 
   // Planet body with an anti-aliased limb.
@@ -326,21 +361,19 @@ vec3 planetScene(vec2 uv){
     vec3 m = rotAxis(n, axis, -uTime * 0.012);
     float lat = dot(n, axis);
     float ndl = dot(n, L);
-    float s0 = max(0.0, 1.0 - abs(uStyle));
-    float s1 = max(0.0, 1.0 - abs(uStyle - 1.0));
-    float s2 = max(0.0, 1.0 - abs(uStyle - 2.0));
-    vec3 alb = vec3(0.0);
-    if (s0 > 0.001) alb += marsSurface(m, lat) * s0;
-    if (s1 > 0.001) alb += jupiterSurface(m, n, lat, axis) * s1;
-    if (s2 > 0.001) alb += uranusSurface(m, lat) * s2;
+    vec3 alb;
+    if (A.w < 0.5) alb = marsSurface(m, lat);
+    else if (A.w < 1.5) alb = jupiterSurface(m, n, lat, axis);
+    else if (A.w < 2.5) alb = uranusSurface(m, lat);
+    else alb = neptuneSurface(m, n, lat, axis);
 
     float diff = max(ndl, 0.0);
     float term = smoothstep(-0.1, 0.25, ndl);
     // Rocky Mars barely darkens at the limb; the gas and ice giants do strongly.
-    float limb = mix(0.92 + 0.08 * nz, 0.4 + 0.6 * pow(nz, 0.5), s1 + s2);
+    float limb = mix(0.92 + 0.08 * nz, 0.4 + 0.6 * pow(nz, 0.5), gas);
     vec3 lit = alb * (0.04 + 1.1 * diff) * term * limb + alb * 0.01;
     float rim = pow(1.0 - nz, 3.0);
-    lit += uAtm * rim * (0.1 + 0.9 * smoothstep(-0.25, 0.7, ndl)) * mix(0.35, 0.8, s1 + s2);
+    lit += C.rgb * rim * (0.1 + 0.9 * smoothstep(-0.25, 0.7, ndl)) * mix(0.35, 0.8, gas);
     pc = lit;
   }
 
@@ -351,7 +384,7 @@ vec3 planetScene(vec2 uv){
     col = mix(col, ringC, ringA);
     col = mix(col, pc, cov);
   }
-  return col;
+  return mix(bg, col, P.w);
 }
 
 vec3 pulsarScene(vec2 uv){
@@ -382,11 +415,15 @@ void main(){
 
   vec3 col = vec3(0.0);
   float tw = 0.0;
-  if (uW.x > 0.002){ col += uW.x * blackhole(uv); tw += uW.x; }
+  // Past the horizon the black hole is faded to black; skip tracing its rays.
+  if (uW.x > 0.002){ if (uFall < 0.99) col += uW.x * blackhole(uv); tw += uW.x; }
   if (uW.y > 0.002){ col += uW.y * nebulaScene(uv); tw += uW.y; }
-  if (uW.z > 0.002){ col += uW.z * planetScene(uv); tw += uW.z; }
+  if (uW.z > 0.002){ col += uW.z * planetSky(uv); tw += uW.z; }
   if (uW.w > 0.002){ col += uW.w * pulsarScene(uv); tw += uW.w; }
   col /= max(tw, 0.001);
+  for (int i = 0; i < 4; i++){
+    if (uP[i].w > 0.002) col = planet(col, uv, uP[i], uPA[i], uPC[i]);
+  }
 
   col = 1.0 - exp(-col * 1.25);
   vec2 vq = gl_FragCoord.xy / uRes - 0.5;

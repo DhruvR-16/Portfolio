@@ -1,38 +1,31 @@
-import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { cosmos } from './store';
 import { worlds, papers, circumplex, EMAIL, GITHUB, LINKEDIN } from './data';
-import { CountUp, GlowCard, Magnetic, Reveal, Scramble, ScrollLit } from './ui';
+import { CountUp, GlowCard, Link, Magnetic, Reveal, Scramble, ScrollLit } from './ui';
 import { useCopy } from './useCopy';
+import { ease, rise, two } from './motion';
 
-const rise = {
-  initial: { opacity: 0, y: 40, filter: 'blur(10px)' },
-  whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
-  viewport: { once: true, margin: '-10% 0px' },
-};
-const ease = [0.16, 1, 0.3, 1];
-const two = (i) => String(i + 1).padStart(2, '0');
-
-export function Nav() {
-  const links = [['About', '#about'], ['Worlds', '#worlds'], ['Research', '#research'], ['Contact', '#contact']];
+// On a project page the section links lead back to the home page.
+export function Nav({ home }) {
+  const at = home ? '' : '/';
+  const links = [['About', 'about'], ['Worlds', 'worlds'], ['Research', 'research'], ['Contact', 'contact']];
   return (
     <header className="nav">
-      <a href="#top" className="nav-mark">
+      <Link to={home ? '#top' : '/'} className="nav-mark">
         <span className="mark" aria-hidden="true" />
         <span className="nav-name">Dhruv Ramani</span>
-      </a>
+      </Link>
       <nav aria-label="Sections">
-        {links.map(([label, href]) => <a key={href} href={href}><Scramble text={label} /></a>)}
+        {links.map(([label, id]) => <Link key={id} to={`${at}#${id}`}><Scramble text={label} /></Link>)}
       </nav>
     </header>
   );
 }
 
 const FIELDS = [
-  ['Machine learning', 'Models that stay honest when the data shifts under them, with calibration and failure analysis built in.'],
-  ['Language models', 'How the framing of a prompt changes how long a reasoning model thinks, and what that costs to serve.'],
   ['Computer vision', 'Real-time pose and motion understanding that runs on the device, with nothing sent to a server.'],
-  ['Astrophysics', 'Transit searches in NASA photometry, from raw flux to a vetted planet candidate.'],
+  ['Reinforcement learning', 'Watching agents as they train, to see whether they are gaming their reward before the results show it.'],
+  ['Language models', 'How the framing of a prompt changes how long a reasoning model thinks, and what that costs to serve.'],
+  ['New territory', 'I pick up unfamiliar fields when a problem calls for them, like transit photometry for Exoplanet Hunter.'],
 ];
 
 export function About() {
@@ -41,7 +34,7 @@ export function About() {
       <p className="label">Beyond the horizon</p>
       <ScrollLit
         className="about-lead"
-        text="I'm Dhruv. I build *machine-learning* systems for messy, physical data, and I'm happiest when that data comes from *deep space.*"
+        text="I'm Dhruv. I like building things I haven't built before, and I go looking for problems that *push back.*"
       />
       <div className="fields">
         {FIELDS.map(([title, body], i) => (
@@ -59,89 +52,39 @@ export function About() {
   );
 }
 
-function World({ w, i, active }) {
+// Every project at a glance. Each card holds its planet (drawn by the WebGL
+// canvas behind the page) and opens the project's own page.
+export function WorldsIndex() {
   return (
-    <article className={`world ${i % 2 ? 'flip' : ''}`} data-world={i}>
-      <div className="world-num" aria-hidden="true">{two(i)}</div>
-      <div className="world-copy">
-        <motion.p className="world-kind" {...rise} transition={{ duration: 0.8, ease }}>
-          <span>World {two(i)}</span> {w.kind} · {w.years}
-        </motion.p>
-        <Reveal as="h3" className="world-name" text={w.name} />
-        {(w.badge || w.credit) && (
-          <motion.p className="chips" {...rise} transition={{ duration: 0.8, ease, delay: 0.06 }}>
-            {w.badge && <span className="chip hot">{w.badge}</span>}
-            {w.credit && <span className="chip">{w.credit}</span>}
-          </motion.p>
-        )}
-        <motion.p className="world-tag" {...rise} transition={{ duration: 0.9, ease, delay: 0.1 }}>{w.tagline}</motion.p>
-        <motion.div className="world-story" {...rise} transition={{ duration: 0.9, ease, delay: 0.18 }}>
-          <p><b>{w.labels[0]}</b>{w.problem}</p>
-          <p><b>{w.labels[1]}</b>{w.fix}</p>
-        </motion.div>
-        <motion.dl className="world-stats" {...rise} transition={{ duration: 0.9, ease, delay: 0.26 }}>
-          {w.stats.map((s) => (
-            <div key={s.label}>
-              <dt>{s.label}</dt>
-              <dd><CountUp value={s.value} decimals={s.decimals} suffix={s.suffix} /></dd>
-            </div>
-          ))}
-        </motion.dl>
-        <motion.ul className="world-stack" {...rise} transition={{ duration: 0.9, ease, delay: 0.32 }}>
-          {w.stack.map((t) => <li key={t}>{t}</li>)}
-        </motion.ul>
-        <motion.div className="world-links" {...rise} transition={{ duration: 0.9, ease, delay: 0.38 }}>
-          {w.links.map((l, j) => (
-            <Magnetic key={l.href}>
-              {l.internal
-                ? <a className="pill" href={l.href}>{l.label} ↓</a>
-                : <a className={j === 0 ? 'pill solid' : 'pill'} href={l.href} target="_blank" rel="noreferrer">{l.label} ↗</a>}
-            </Magnetic>
-          ))}
-        </motion.div>
-      </div>
-      <figure className="world-planet">
-        <div className="planet-slot" data-planet-slot={active ? '' : undefined} aria-hidden="true" />
-        <figcaption><b>{w.planetName}</b>{w.planetNote}</figcaption>
-      </figure>
-    </article>
-  );
-}
-
-export function Worlds() {
-  const ref = useRef(null);
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    let raf = 0;
-    const pick = () => {
-      raf = 0;
-      const mid = window.innerHeight / 2;
-      let best = 0;
-      let bestD = Infinity;
-      ref.current.querySelectorAll('[data-world]').forEach((el) => {
-        const r = el.getBoundingClientRect();
-        const d = Math.abs(r.top + r.height / 2 - mid);
-        if (d < bestD) { bestD = d; best = Number(el.dataset.world); }
-      });
-      setActive((prev) => (prev === best ? prev : best));
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(pick); };
-    pick();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => { cancelAnimationFrame(raf); window.removeEventListener('scroll', onScroll); };
-  }, []);
-
-  useEffect(() => { cosmos.planet = worlds[active].planet; }, [active]);
-
-  return (
-    <section className="worlds" id="worlds" data-scene="2" ref={ref}>
+    <section className="worlds" id="worlds" data-scene="2">
       <div className="worlds-head">
         <p className="label">Selected work</p>
         <Reveal as="h2" className="big" text="Worlds I've *built*" />
-        <p className="worlds-sub">Every project gets its own planet. Scroll to travel between them.</p>
+        <p className="worlds-sub">Every project is its own planet, lined up by distance from the Sun. Pick one to land on it.</p>
       </div>
-      {worlds.map((w, i) => <World key={w.id} w={w} i={i} active={i === active} />)}
+      <ul className="world-grid">
+        {worlds.map((w, i) => (
+          <motion.li
+            key={w.id}
+            initial={{ y: 36 }}
+            whileInView={{ y: 0 }}
+            viewport={{ once: true, margin: '-8% 0px' }}
+            transition={{ duration: 1, ease, delay: i * 0.08 }}
+          >
+            <Link to={`/work/${w.id}`} className="world-card">
+              <div className="planet-slot" data-planet={w.id} aria-hidden="true" />
+              <div className="world-card-copy">
+                <p className="world-card-top"><span>{two(i)} · {w.planetName}</span><span>{w.au}</span></p>
+                <h3>{w.name}</h3>
+                <p className="world-card-kind">{w.kind}</p>
+                <p className="world-card-blurb">{w.blurb}</p>
+                <p className="world-card-fact"><b>{w.headline.value}</b><span>{w.headline.label}</span></p>
+                <span className="world-card-go">Explore <i aria-hidden="true">→</i></span>
+              </div>
+            </Link>
+          </motion.li>
+        ))}
+      </ul>
     </section>
   );
 }
@@ -195,7 +138,7 @@ function Circumplex() {
   );
 }
 
-function Paper({ p }) {
+export function Paper({ p }) {
   const [copied, copy] = useCopy();
   return (
     <motion.article className="paper" {...rise} transition={{ duration: 1, ease }}>

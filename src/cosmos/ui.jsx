@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, useInView, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { navigate } from './router';
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>+*';
 
@@ -116,6 +117,17 @@ export function CountUp({ value, decimals = 0, suffix = '' }) {
   }, [inView, value, reduce]);
   const text = shown.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
   return <span ref={ref} className="count">{text}{suffix}</span>;
+}
+
+// A link to another page of the site. Same-page "#id" links, and clicks that
+// open a new tab or window, are left to the browser.
+export function Link({ to, ...rest }) {
+  const go = (e) => {
+    if (to.startsWith('#') || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    e.preventDefault();
+    navigate(to);
+  };
+  return <a href={to} onClick={go} {...rest} />;
 }
 
 // Card whose border glow follows the cursor.

@@ -1,17 +1,11 @@
 import { useEffect, useRef } from 'react';
 
-const SECTIONS = [
-  ['top', 'Horizon'],
-  ['about', 'About'],
-  ['worlds', 'Worlds'],
-  ['research', 'Research'],
-  ['contact', 'Contact'],
-];
 const THUMB = 46;
 
 // Replaces the native scrollbar on mouse and trackpad devices (see cosmos.css).
 // Wheel, keyboard and touch scrolling are untouched; this only draws and drags.
-export function ScrollRail() {
+// `sections` are the page's [id, name] pairs, marked along the rail.
+export function ScrollRail({ sections }) {
   const rail = useRef(null);
   const thumb = useRef(null);
   const label = useRef(null);
@@ -28,7 +22,7 @@ export function ScrollRail() {
     const layout = () => {
       maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
       travel = Math.max(1, rail.current.clientHeight - THUMB);
-      tops = SECTIONS.map(([id]) => {
+      tops = sections.map(([id]) => {
         const el = document.getElementById(id);
         return el ? el.getBoundingClientRect().top + window.scrollY : 0;
       });
@@ -44,7 +38,8 @@ export function ScrollRail() {
       thumb.current.style.transform = `translateY(${Math.min(1, y / maxScroll) * travel}px)`;
       let i = 0;
       tops.forEach((top, k) => { if (y + window.innerHeight * 0.4 >= top) i = k; });
-      if (label.current.textContent !== SECTIONS[i][1]) label.current.textContent = SECTIONS[i][1];
+      const name = sections[i] ? sections[i][1] : '';
+      if (label.current.textContent !== name) label.current.textContent = name;
       marks.current.forEach((el, k) => el && el.classList.toggle('on', k === i));
       rail.current.classList.add('moving');
       clearTimeout(hideTimer);
@@ -98,7 +93,7 @@ export function ScrollRail() {
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', layout);
     };
-  }, []);
+  }, [sections]);
 
   const jump = (id) => {
     const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -107,13 +102,13 @@ export function ScrollRail() {
 
   return (
     <div className="rail" ref={rail} aria-hidden="true">
-      {SECTIONS.map(([id, name], i) => (
+      {sections.map(([id, name], i) => (
         <span key={id} className="rail-mark" ref={(el) => { marks.current[i] = el; }} onClick={() => jump(id)}>
           <em>{name}</em>
         </span>
       ))}
       <span className="rail-thumb" ref={thumb}>
-        <em ref={label}>Horizon</em>
+        <em ref={label}>{sections[0]?.[1]}</em>
       </span>
     </div>
   );
