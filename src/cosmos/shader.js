@@ -19,6 +19,12 @@ uniform vec3 uPulsar;
 // spin axis + style; atmosphere tint + rings.
 uniform vec4 uP[4], uPA[4], uPC[4];
 uniform vec3 uDiskHot, uDiskMid, uDiskCool, uGlow, uNeb1, uNeb2, uNeb3, uBeam;
+// Lighter mode: uPass = 1 renders only the black hole, tone-mapped, into a texture;
+// uStill = 1 then draws the black hole from that still. uRest is the camera it was
+// taken from: hole centre xy, distance, focal length.
+uniform float uPass, uStill;
+uniform vec4 uRest;
+uniform sampler2D uStillTex;
 
 const float BC = 2.5980762; // critical impact parameter, 3*sqrt(3)/2 r_s
 
@@ -196,6 +202,17 @@ vec3 blackhole(vec2 uvScreen){
   col += (1.0 - alpha) * (bg * esc + ringCol);
   col += uGlow * glow * 1.2 * uIntro * (1.0 - 0.6 * alpha);
   return col * (1.0 - smoothstep(0.86, 0.99, uFall));
+}
+
+// Falling in zooms into the still as fast as the hole grows on screen for the live
+// camera (focal length over distance), centred where the live camera puts it,
+// then fades to black like the live version.
+vec3 blackholeStill(vec2 uv){
+  float z = (uFov / uRest.w) * (uRest.z / uDist);
+  vec2 p = uRest.xy + (uv - uBH) / z;
+  vec3 c = texture2D(uStillTex, vec2(p.x * uRes.y / uRes.x + 0.5, p.y + 0.5)).rgb;
+  c = -log(max(1.0 - c, 0.004)) / 1.25; // undo the tone map applied at capture
+  return c * uIntro * (1.0 - smoothstep(0.86, 0.99, uFall));
 }
 
 vec3 viewDir(vec2 uv, float spin){
@@ -410,13 +427,23 @@ vec3 pulsarScene(vec2 uv){
 
 void main(){
   vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
+  if (uPass > 0.5){
+    gl_FragColor = vec4(1.0 - exp(-blackhole(uv) * 1.25), 1.0);
+    return;
+  }
   vec2 dl = uv - uCursor;
   uv -= dl * (uLensE / (dot(dl, dl) + 0.00035));
 
   vec3 col = vec3(0.0);
   float tw = 0.0;
   // Past the horizon the black hole is faded to black; skip tracing its rays.
-  if (uW.x > 0.002){ if (uFall < 0.99) col += uW.x * blackhole(uv); tw += uW.x; }
+  if (uW.x > 0.002){
+    if (uFall < 0.99){
+      if (uStill > 0.5) col += uW.x * blackholeStill(uv);
+      else col += uW.x * blackhole(uv);
+    }
+    tw += uW.x;
+  }
   if (uW.y > 0.002){ col += uW.y * nebulaScene(uv); tw += uW.y; }
   if (uW.z > 0.002){ col += uW.z * planetSky(uv); tw += uW.z; }
   if (uW.w > 0.002){ col += uW.w * pulsarScene(uv); tw += uW.w; }

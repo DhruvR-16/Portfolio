@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { worlds, papers, circumplex, EMAIL, GITHUB, LINKEDIN } from './data';
+import { worlds, papers, circumplex, EMAIL, GITHUB, LINKEDIN, RESUME } from './data';
 import { CountUp, GlowCard, Link, Magnetic, Reveal, Scramble, ScrollLit } from './ui';
 import { useCopy } from './useCopy';
 import { ease, rise, two } from './motion';
@@ -16,6 +16,7 @@ export function Nav({ home }) {
       </Link>
       <nav aria-label="Sections">
         {links.map(([label, id]) => <Link key={id} to={`${at}#${id}`}><Scramble text={label} /></Link>)}
+        <a href={RESUME} target="_blank" rel="noreferrer"><Scramble text="Résumé" /></a>
       </nav>
     </header>
   );
@@ -225,6 +226,7 @@ export function Contact() {
           </Magnetic>
         </motion.div>
         <ul className="contact-links">
+          <li><a href={RESUME} target="_blank" rel="noreferrer"><Scramble text="Résumé" /> ↗</a></li>
           <li><a href={GITHUB} target="_blank" rel="noreferrer"><Scramble text="GitHub" /> ↗</a></li>
           <li><a href={LINKEDIN} target="_blank" rel="noreferrer"><Scramble text="LinkedIn" /> ↗</a></li>
           <li><a href={`mailto:${EMAIL}`}><Scramble text="Open mail app" /> ↗</a></li>

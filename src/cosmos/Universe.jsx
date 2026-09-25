@@ -6,9 +6,10 @@ import { PALETTE } from './themes';
 
 const COLORS = ['diskHot', 'diskMid', 'diskCool', 'glow', 'neb1', 'neb2', 'neb3', 'beam'];
 const UNIFORMS = ['uRes', 'uTime', 'uDist', 'uFall', 'uIncl', 'uFov', 'uRoll', 'uIntro', 'uLensE', 'uScroll',
-  'uMouse', 'uCursor', 'uBH', 'uW', 'uPulsar', 'uP', 'uPA', 'uPC',
+  'uMouse', 'uCursor', 'uBH', 'uW', 'uPulsar', 'uP', 'uPA', 'uPC', 'uPass', 'uStill', 'uRest',
   'uDiskHot', 'uDiskMid', 'uDiskCool', 'uGlow', 'uNeb1', 'uNeb2', 'uNeb3', 'uBeam'];
 const MAX_PIXELS = 4.2e6;
+const MIN_SCALE = 0.55; // lowest render resolution, in device pixels per CSS pixel
 const PLANETS = 4; // the length of uP, uPA and uPC in shader.js
 const FLIGHT = 1100; // ms for a planet to fly to its slot on a new page
 
@@ -93,6 +94,15 @@ export function Universe() {
     let scale = maxScale;
     let W = 0;
     let H = 0;
+    // Lighter mode, for devices that can't trace the black hole live even at the
+    // lowest resolution: it is rendered once, from where the page starts, into a
+    // texture, and the fall zooms into that still. Everything else stays live.
+    // ?still in the URL turns it on, to preview it.
+    let still = false;
+    let stillReady = false;
+    let stillFor = '';
+    let tex = null;
+    let fbo = null;
     const resize = () => {
       W = window.innerWidth;
       H = window.innerHeight;
@@ -103,6 +113,49 @@ export function Universe() {
     };
     resize();
     window.addEventListener('resize', resize);
+
+    const goStill = () => {
+      still = true;
+      root.dataset.blackhole = 'still';
+      // Drawing from the still is cheap, so it can go back to a sharp resolution.
+      scale = Math.min(maxScale, 1.25);
+      sceneScale[0] = scale;
+      resize();
+    };
+    const capture = (t) => {
+      if (!tex) { tex = gl.createTexture(); fbo = gl.createFramebuffer(); }
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.bindTexture(gl.TEXTURE_2D, null); // not bound for sampling while it is drawn into
+      gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex, 0);
+      if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE) {
+        const r = cosmos.rest;
+        gl.uniform1f(u.uPass, 1);
+        gl.uniform2f(u.uRes, canvas.width, canvas.height);
+        gl.uniform1f(u.uTime, t);
+        gl.uniform1f(u.uDist, r.dist);
+        gl.uniform1f(u.uFall, 0);
+        gl.uniform1f(u.uIncl, r.incl);
+        gl.uniform1f(u.uFov, r.fov);
+        gl.uniform1f(u.uRoll, cosmos.roll);
+        gl.uniform1f(u.uIntro, 1);
+        gl.uniform2f(u.uMouse, 0, 0);
+        gl.uniform2f(u.uBH, r.bh[0], r.bh[1]);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        gl.uniform1f(u.uPass, 0);
+        gl.uniform4f(u.uRest, r.bh[0], r.bh[1], r.dist, r.fov);
+        stillReady = true;
+      }
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      stillFor = `${W}x${H}`;
+    };
+    if (new URLSearchParams(window.location.search).has('still')) goStill();
 
     const mouse = { x: 0, y: 0, tx: 0, ty: 0, cx: 0, cy: 0.9, tcx: 0, tcy: 0.9, lens: 0 };
     const onMove = (e) => {
@@ -122,8 +175,8 @@ export function Universe() {
     const pv = new Float32Array(PLANETS * 4);
     let lensE = 0;
     let dominant = 0;
-    let slowFrames = 0;
-    let cooldown = 0;
+    let warm = 8;
+    let times = [];
     let last = performance.now();
     const start = last;
     let raf = 0;
@@ -145,23 +198,40 @@ export function Universe() {
       });
       if (w[0] + w[1] + w[2] + w[3] < 0.001) w[0] = 1;
 
-      // Per-scene resolution. Ignore throttled frames (background tabs, hidden panes).
+      // Per-scene resolution. Every 12 frames, a scene whose median frame is slower
+      // than ~45 fps jumps straight to the resolution that should hold 60 (the cost
+      // follows the pixel count). If the black hole would need less than MIN_SCALE,
+      // it switches to the still. Hidden tabs and the frames just after a change
+      // don't count, and the median ignores one-off hiccups.
       const dom = w.indexOf(Math.max(...w));
       if (dom !== dominant) {
         dominant = dom;
+        warm = 8;
+        times = [];
         if (sceneScale[dom] !== scale) { scale = sceneScale[dom]; resize(); }
       }
-      if (!reduce && rawDt < 120 && !document.hidden) {
-        slowFrames = rawDt > 24 ? slowFrames + 1 : Math.max(0, slowFrames - 2);
-        if (cooldown > 0) cooldown -= 1;
-        else if (slowFrames > 24 && scale > 0.55) {
-          scale = Math.max(0.55, scale * 0.84);
-          sceneScale[dominant] = scale;
-          slowFrames = 0;
-          cooldown = 50;
-          resize();
+      if (!reduce && !document.hidden && rawDt < 1000 && !(still && dominant === 0)) {
+        if (warm > 0) {
+          warm -= 1;
+        } else {
+          times.push(rawDt);
+          if (times.length === 12) {
+            const median = times.sort((a, b) => a - b)[6];
+            times = [];
+            if (median > 22) {
+              const want = scale * Math.sqrt(18 / median);
+              if (want < MIN_SCALE && dominant === 0) goStill();
+              else if (scale > MIN_SCALE) {
+                scale = Math.max(MIN_SCALE, want);
+                sceneScale[dominant] = scale;
+                resize();
+              }
+              warm = 8;
+            }
+          }
         }
       }
+      if (still && w[0] > 0.002 && stillFor !== `${W}x${H}`) capture(t);
 
       mouse.x = lerp(mouse.x, mouse.tx, ease(0.04, dt));
       mouse.y = lerp(mouse.y, mouse.ty, ease(0.04, dt));
@@ -220,6 +290,7 @@ export function Universe() {
       gl.uniform2f(u.uBH, cosmos.bh[0], cosmos.bh[1]);
       gl.uniform4f(u.uW, w[0], w[1], w[2], w[3]);
       gl.uniform4fv(u.uP, pv);
+      gl.uniform1f(u.uStill, stillReady ? 1 : 0);
       gl.uniform3f(u.uPulsar, pu[0], pu[1], pu[2]);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
@@ -231,6 +302,9 @@ export function Universe() {
       window.removeEventListener('pointermove', onMove);
       root.removeEventListener('mouseleave', onLeave);
       gl.deleteBuffer(buf);
+      gl.deleteTexture(tex);
+      gl.deleteFramebuffer(fbo);
+      delete root.dataset.blackhole;
       gl.deleteProgram(prog);
       gl.deleteShader(vs);
       gl.deleteShader(fs);

@@ -6,6 +6,8 @@ import { GITHUB } from './data';
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
 const lerp = (a, b, t) => a + (b - a) * t;
+const INCL = 0.2; // viewing angle and field of view before any scroll
+const FOV = 1.75;
 
 // Scroll choreography for the hero, f = 0 → 1:
 //   0.00–0.20  the copy lifts and fades
@@ -37,6 +39,7 @@ export function Hero() {
       const portrait = W / H < 0.9;
       start = portrait ? 34 : 26;
       rest = portrait ? [0, 0.17] : [Math.max(0.12, (W * 0.7 - W / 2) / H), 0.07];
+      cosmos.rest = { dist: start, incl: INCL, fov: FOV, bh: rest };
       dirty = true;
     };
     const setText = (el, text) => { if (el.textContent !== text) el.textContent = text; };
@@ -45,8 +48,8 @@ export function Hero() {
       const settle = 1 - smooth(0, 0.5, f);
       cosmos.fall = f;
       cosmos.dist = distForFall(f, start);
-      cosmos.incl = lerp(0.2, 1.05, smooth(0.05, 0.72, f));
-      cosmos.fov = lerp(1.75, 1.3, smooth(0.3, 1, f));
+      cosmos.incl = lerp(INCL, 1.05, smooth(0.05, 0.72, f));
+      cosmos.fov = lerp(FOV, 1.3, smooth(0.3, 1, f));
       cosmos.bh = [rest[0] * settle, rest[1] * settle];
 
       setText(hudR.current, cosmos.dist.toFixed(2));
@@ -98,7 +101,7 @@ export function Hero() {
       <div className="hero-stick">
         <div className="hero-copy">
           <p className="hero-kicker" ref={(el) => { copy.current[0] = el; }}>
-            <span className="dot" aria-hidden="true" /> Computer vision × RL × Language models
+            <span className="dot" aria-hidden="true" /> Computer vision × RL × LLMs
           </p>
           <h1 className="hero-name" ref={name}>Dhruv Ramani</h1>
           <p className="hero-tag" ref={(el) => { copy.current[1] = el; }}>

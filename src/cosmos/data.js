@@ -1,6 +1,7 @@
 export const EMAIL = 'dhruvramani006@gmail.com';
 export const GITHUB = 'https://github.com/DhruvR-16';
 export const LINKEDIN = 'https://www.linkedin.com/in/dhruv-ramani1/';
+export const RESUME = '/Dhruv_Ramani_Resume.pdf';
 
 // Each project is a world, rendered as a real planet and listed in order of distance
 // from the Sun. `planet` drives the shader: style 0 = Mars, 1 = Jupiter, 2 = Uranus,
