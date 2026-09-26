@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Unfinished work kept off the site and out of the repo
+drafts/

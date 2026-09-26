@@ -112,39 +112,6 @@ export const worlds = [
     planetNote: 'Ice giant that rolls on its side, 97.8° axial tilt',
     au: '19.2 AU',
   },
-  {
-    id: 'driftlens',
-    name: 'DriftLens',
-    kind: 'Reinforcement learning × AI safety',
-    years: '2026',
-    tagline: 'Can you tell a reinforcement-learning agent has started gaming its reward before the results show it? DriftLens watches the training updates themselves, not just the score.',
-    blurb: 'Watches an RL agent’s training updates for signs that it has started gaming its reward.',
-    headline: { value: '0–100', label: 'drift score, read from the training updates' },
-    labels: ['The question', 'What I built'],
-    problem: 'An agent optimises the reward it is given, not the task you meant. In a grid world with a trap that pays out for staying put, PPO learns to sit in the trap and never reaches the goal, and on the reward curve that looks like success: 193 points against 10.6 for an honest run.',
-    fix: 'An instrumented PPO that captures the policy’s gradients and parameter updates as it trains, and three families of signals read from them: agreement with fixed anchor decisions, the geometry of recent updates, and loops in the agent’s path. They fold into one 0–100 drift score, and true-task success stays out of it.',
-    stats: [
-      { value: 3, label: 'families of signals, read during training' },
-      { value: 7, label: 'baseline detectors it is compared against' },
-      { value: 4, label: 'bugs found and fixed in my own first result' },
-    ],
-    stack: ['Python', 'PyTorch', 'Stable-Baselines3', 'Gymnasium', 'TensorBoard'],
-    steps: [
-      ['Train', 'PPO learns a 15 × 7 grid world twice: once with an honest reward, once with a trap that keeps paying out.'],
-      ['Capture', 'A Stable-Baselines3 PPO subclass records each gradient before the optimiser step and the exact parameter change after it.'],
-      ['Measure', 'How well each update agrees with fixed anchor decisions, the effective rank and principal angles of recent updates, and how often the agent loops.'],
-      ['Score', 'Median/MAD normalisation folds the signals into a 0–100 drift score with warning levels. The true task stays out of the score and only labels when the hack began.'],
-    ],
-    outcome: {
-      label: 'Where it stands',
-      text: 'The first sweep said DriftLens warned before the hack in 3 of 3 runs. Then I found four bugs in my own measurements: an inverted alignment sign, evaluation that corrupted training, a rank baseline frozen too early, and behaviour read from shuffled batches. On the fixed code no exploit run warns early, and normal runs still trip the warning. So I’m building TippingGrid, a benchmark with exact labels where a decoy hack earns the same return as honest play, so the reward alone can’t give it away.',
-    },
-    links: [{ label: 'View code', href: 'https://github.com/DhruvR-16/DriftLens' }],
-    planet: { style: 3, axis: [0.32, 0.9, 0.29], atm: [0.45, 0.64, 1.0], rings: 0 },
-    planetName: 'Neptune',
-    planetNote: 'Ice giant, found in 1846 from its pull on Uranus’s orbit',
-    au: '30.1 AU',
-  },
 ];
 
 // The 13 SpiralState conditions, with the valence/arousal coordinates fixed in

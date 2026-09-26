@@ -275,7 +275,9 @@ a { color: inherit; }
 .worlds { position: relative; max-width: 1360px; margin: 0 auto; padding: clamp(110px, 17vh, 190px) var(--gut) clamp(40px, 8vh, 90px); }
 .worlds-head { max-width: 760px; }
 .worlds-sub { margin: 18px 0 0; color: var(--ink-2); font-size: 1.02rem; }
-.world-grid { list-style: none; margin: clamp(40px, 7vh, 72px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.world-grid { list-style: none; margin: clamp(40px, 7vh, 72px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+/* Four worlds: one row on wide screens, two by two below that. Three stay in one row. */
+.world-grid:has(> li:nth-child(4)) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .world-grid > li { display: flex; }
 /* No fill behind the planet: it is drawn by the canvas under the page. */
 .world-card {
@@ -318,9 +320,9 @@ a { color: inherit; }
 .world-card-go { margin-top: 8px; font: 500 12px/1 var(--mono); letter-spacing: 0.16em; text-transform: uppercase; }
 .world-card-go i { display: inline-block; font-style: normal; transition: transform 0.4s var(--ease); }
 .world-card:hover .world-card-go i { transform: translateX(5px); }
-@media (max-width: 1100px) { .world-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1100px) { .world-grid:has(> li:nth-child(4)) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 640px) {
-  .world-grid { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .world-grid, .world-grid:has(> li:nth-child(4)) { grid-template-columns: minmax(0, 1fr); gap: 12px; }
   .world-card { flex-direction: row; align-items: center; gap: 16px; padding: 14px 16px; }
   .world-card .planet-slot { flex: none; width: 96px; }
   .world-card-copy { gap: 6px; }
