@@ -77,7 +77,7 @@ export function WorldsIndex() {
               <div className="world-card-copy">
                 <p className="world-card-top"><span>{two(i)} · {w.planetName}</span><span>{w.au}</span></p>
                 <h3>{w.name}</h3>
-                <p className="world-card-kind">{w.kind}</p>
+                <p className="world-card-kind">{w.kind}{w.status && <span className="chip hot">{w.status}</span>}</p>
                 <p className="world-card-blurb">{w.blurb}</p>
                 <p className="world-card-fact"><b>{w.headline.value}</b><span>{w.headline.label}</span></p>
                 <span className="world-card-go">Explore <i aria-hidden="true">→</i></span>

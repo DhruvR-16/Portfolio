@@ -15,9 +15,9 @@ uniform float uTime, uDist, uFall, uIncl, uFov, uRoll, uIntro, uLensE, uScroll;
 uniform vec2 uMouse, uCursor, uBH;
 uniform vec4 uW;
 uniform vec3 uPulsar;
-// Up to four planets, drawn over every scene: centre xy, radius, opacity;
+// Up to six planets, drawn over every scene: centre xy, radius, opacity;
 // spin axis + style; atmosphere tint + rings.
-uniform vec4 uP[4], uPA[4], uPC[4];
+uniform vec4 uP[6], uPA[6], uPC[6];
 uniform vec3 uDiskHot, uDiskMid, uDiskCool, uGlow, uNeb1, uNeb2, uNeb3, uBeam;
 // Lighter mode: uPass = 1 renders only the black hole, tone-mapped, into a texture;
 // uStill = 1 then draws the black hole from that still. uRest is the camera it was
@@ -237,7 +237,7 @@ vec3 nebulaScene(vec2 uv){
   return c;
 }
 
-// ---------- planets: 0 = Mars, 1 = Jupiter, 2 = Uranus, 3 = Neptune ----------
+// ---------- planets: 0 = Mars, 1 = Jupiter, 2 = Uranus, 3 = Neptune, 4 = Venus, 5 = Earth ----------
 
 float bandMask(float y, float a, float b){
   return smoothstep(a - 0.012, a + 0.012, y) * (1.0 - smoothstep(b - 0.012, b + 0.012, y));
@@ -296,6 +296,25 @@ vec3 uranusSurface(vec3 m, float lat){
   return mix(c, vec3(0.8, 0.96, 0.98), smoothstep(0.5, 0.92, lat) * 0.6);
 }
 
+// Venus: unbroken cloud deck, banded faintly by the four-day super-rotating winds.
+vec3 venusSurface(vec3 m, float lat){
+  float w = fbm(m * 2.0 + vec3(uTime * 0.01, 0.0, 0.0), 4.0);
+  float b = sin(lat * 7.0 + w * 3.0);
+  vec3 c = mix(vec3(0.84, 0.74, 0.54), vec3(0.95, 0.9, 0.76), 0.5 + 0.5 * b);
+  return c * (0.9 + 0.15 * fbm(m * 5.0, 3.0));
+}
+
+// Earth: oceans, continents, polar ice and drifting cloud.
+vec3 earthSurface(vec3 m, float lat){
+  float land = fbm(m * 1.6 + vec3(4.1, 2.3, 7.7), 5.0);
+  vec3 ocean = mix(vec3(0.03, 0.11, 0.3), vec3(0.06, 0.2, 0.42), fbm(m * 3.0, 2.0));
+  vec3 ground = mix(vec3(0.2, 0.3, 0.13), vec3(0.55, 0.45, 0.3), smoothstep(0.58, 0.7, land));
+  vec3 c = mix(ocean, ground, smoothstep(0.52, 0.56, land));
+  c = mix(c, vec3(0.92, 0.95, 0.97), smoothstep(0.82, 0.88, abs(lat) + 0.04 * fbm(m * 6.0, 2.0)));
+  float cloud = fbm(m * 2.6 + vec3(0.0, uTime * 0.004, 3.0), 5.0);
+  return mix(c, vec3(0.96), smoothstep(0.55, 0.75, cloud) * 0.85);
+}
+
 vec3 neptuneSurface(vec3 m, vec3 n, float lat, vec3 axis){
   float warp = fbm(m * 2.4 + vec3(0.0, 0.0, uTime * 0.015), 3.0) - 0.5;
   float y = lat + warp * 0.06;
@@ -351,7 +370,7 @@ vec3 planet(vec3 bg, vec2 uv, vec4 P, vec4 A, vec4 C){
   float px = 1.0 / (uRes.y * R);
   vec3 L = normalize(vec3(-0.62, 0.42, 0.66));
   vec3 axis = normalize(A.xyz);
-  float gas = step(0.5, A.w);
+  float gas = step(0.5, A.w) * (1.0 - step(4.5, A.w)); // Earth limbs like a rocky planet
   vec3 col = bg;
 
   float side = 0.3 + 0.7 * smoothstep(-0.5, 0.9, dot(q / max(rr, 1e-4), normalize(L.xy)));
@@ -382,7 +401,9 @@ vec3 planet(vec3 bg, vec2 uv, vec4 P, vec4 A, vec4 C){
     if (A.w < 0.5) alb = marsSurface(m, lat);
     else if (A.w < 1.5) alb = jupiterSurface(m, n, lat, axis);
     else if (A.w < 2.5) alb = uranusSurface(m, lat);
-    else alb = neptuneSurface(m, n, lat, axis);
+    else if (A.w < 3.5) alb = neptuneSurface(m, n, lat, axis);
+    else if (A.w < 4.5) alb = venusSurface(m, lat);
+    else alb = earthSurface(m, lat);
 
     float diff = max(ndl, 0.0);
     float term = smoothstep(-0.1, 0.25, ndl);
@@ -448,7 +469,7 @@ void main(){
   if (uW.z > 0.002){ col += uW.z * planetSky(uv); tw += uW.z; }
   if (uW.w > 0.002){ col += uW.w * pulsarScene(uv); tw += uW.w; }
   col /= max(tw, 0.001);
-  for (int i = 0; i < 4; i++){
+  for (int i = 0; i < 6; i++){
     if (uP[i].w > 0.002) col = planet(col, uv, uP[i], uPA[i], uPC[i]);
   }
 

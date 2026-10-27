@@ -5,9 +5,76 @@ export const RESUME = '/Dhruv_Ramani_Resume.pdf';
 
 // Each project is a world, rendered as a real planet and listed in order of distance
 // from the Sun. `planet` drives the shader: style 0 = Mars, 1 = Jupiter, 2 = Uranus,
-// 3 = Neptune; axis = spin axis in view space (x right, y up, z towards you);
+// 3 = Neptune, 4 = Venus, 5 = Earth; axis = spin axis in view space (x right, y up, z towards you);
 // atm = atmosphere tint; rings 0 → 1. `steps` is how it works, [title, text].
 export const worlds = [
+  {
+    id: 'rural-health',
+    name: 'Rural Health Triage',
+    kind: 'Reinforcement learning × Health',
+    years: '2026',
+    tagline: 'An OpenEnv reinforcement-learning environment where an agent triages patients the way a rural health worker has to: few tests, a small budget and high stakes.',
+    blurb: 'An RL environment where an agent triages synthetic patients on a tight budget.',
+    headline: { value: '0.534', label: 'mean score for Llama-3.1-8B across the three tasks' },
+    labels: ['The problem', 'What I built'],
+    problem: 'Community health workers in rural regions triage patients with little equipment and sometimes under $10 per patient, where a wrong call, like missed malaria or delayed appendicitis, is costly.',
+    fix: 'An OpenEnv-compliant environment grounded in WHO guidelines. The agent asks about symptoms and orders tests within a budget, then diagnoses, treats, refers or discharges, with a reward at every step.',
+    stats: [
+      { value: 9, label: 'WHO-guideline disease presentations' },
+      { value: 3, label: 'graded tasks, budget $20 down to $8' },
+      { value: 0, label: 'LLM judges: every grader is deterministic' },
+    ],
+    stack: ['Python', 'FastAPI', 'Pydantic', 'Docker'],
+    steps: [
+      ['Reset', 'Each episode starts with a synthetic patient: age, sex, vitals and a chief complaint.'],
+      ['Gather', 'The agent asks about symptoms and orders tests, and every test is paid for from a shrinking budget.'],
+      ['Decide', 'It makes a diagnosis, then prescribes, refers or discharges the patient.'],
+      ['Score', 'Graders use ground truth fixed when the case is generated, and shaped rewards penalise dangerous treatment and discharging critical patients.'],
+    ],
+    outcome: {
+      label: 'Baseline',
+      text: 'Llama-3.1-8B averaged 0.534. It identified the diagnoses across all three tasks but scored zero on treatment selection, a gap the task-level reward breakdown makes visible.',
+    },
+    links: [],
+    planet: { style: 4, axis: [0.05, 0.99, 0.1], atm: [0.95, 0.85, 0.6], rings: 0 },
+    planetName: 'Venus',
+    planetNote: 'Wrapped in sulphuric-acid cloud, 465 °C at the surface',
+    au: '0.72 AU',
+  },
+  {
+    id: 'watertrace',
+    name: 'WaterTrace',
+    kind: 'Remote sensing × Computer vision',
+    years: '2026 — present',
+    status: 'Ongoing',
+    tagline: 'A local workspace that reads real Sentinel-1 radar after a flood and shows reviewers where there is water evidence, and where evidence is missing.',
+    blurb: 'Satellite radar evidence for post-flood review, without passing missing data off as a dry field.',
+    headline: { value: '45.1% vs 23.2%', label: 'water IoU against a single-band Otsu baseline' },
+    labels: ['The problem', 'What I built'],
+    problem: 'After a flood, a field with no usable satellite observation can look the same as a dry, safe one. Reviewers need to see where the evidence is, and where it is not.',
+    fix: 'A workspace on real Sentinel-1 radar and OpenCV that keeps water evidence and missing evidence in separate review queues, compares two dates without implying how long water stayed, and exports every decision with its sources.',
+    stats: [
+      { value: 90, label: 'benchmark chips from the Sen1Floods11 test split' },
+      { value: 10, label: 'flood events, scored separately' },
+      { value: 4, label: 'methods compared on the same data' },
+    ],
+    stack: ['Python', 'OpenCV', 'FastAPI', 'Rasterio', 'JavaScript'],
+    steps: [
+      ['Ingest', 'Calibrated VV/VH radar GeoTIFFs, with bounded uploads and an explicit state for unknown pixels.'],
+      ['Detect', 'OpenCV marks water evidence and uncertain pixels. Inference never reads the labels.'],
+      ['Compare', 'Paired dates separate new water, repeat water and water with no earlier baseline. Two dates never imply duration.'],
+      ['Review', 'Queues put evidence gaps first. Reviewers add notes and export JSON or GeoJSON with source digests.'],
+    ],
+    outcome: {
+      label: 'Where it stands',
+      text: 'On all 90 test chips, WaterTrace reached 75.6% water precision and 45.1% IoU, against 25.5% and 23.2% for a single-band Otsu baseline. It misses more water, though: 52.9% recall against 72.2%, and it does worse than the baseline in Pakistan and Sri Lanka. It is a working research prototype, not a validated flood or crop-damage system.',
+    },
+    links: [{ label: 'View code', href: 'https://github.com/DhruvR-16/WaterTrace' }],
+    planet: { style: 5, axis: [0.38, 0.9, 0.2], atm: [0.45, 0.66, 1.0], rings: 0 },
+    planetName: 'Earth',
+    planetNote: 'Ocean world, 23.4° axial tilt',
+    au: '1.00 AU',
+  },
   {
     id: 'mavis',
     name: 'Mavis',
@@ -111,6 +178,40 @@ export const worlds = [
     planetName: 'Uranus',
     planetNote: 'Ice giant that rolls on its side, 97.8° axial tilt',
     au: '19.2 AU',
+  },
+  {
+    id: 'driftlens',
+    name: 'DriftLens',
+    kind: 'Reinforcement learning × AI safety',
+    years: '2026 — present',
+    status: 'Ongoing',
+    tagline: 'Can training-time signals warn that an RL agent is gaming its reward? DriftLens instruments PPO, builds benchmarks where the exploit is controlled, and reports where those signals fail.',
+    blurb: 'Testing whether training-time signals can warn that an RL agent is gaming its reward.',
+    headline: { value: '5 / 5', label: 'paired policies identical in training, only one harmful' },
+    labels: ['The question', 'What I built'],
+    problem: 'An agent optimises the reward it is given, not the task you meant. When that reward can be gamed, the training curve can look like success while the agent learns the wrong thing.',
+    fix: 'An instrumented PPO that logs every update (anchor-gradient alignment, effective rank, subspace angles, behaviour entropy), two Gymnasium benchmarks with deliberately exploitable rewards, and a true-task oracle kept out of the online score.',
+    stats: [
+      { value: 2, label: 'benchmarks: ShortcutGrid and TippingGrid' },
+      { value: 392, label: 'learner-visible updates matched in each paired run' },
+      { value: 115, label: 'tests passing locally' },
+    ],
+    stack: ['Python', 'PyTorch', 'Stable-Baselines3', 'Gymnasium'],
+    steps: [
+      ['Instrument', 'A Stable-Baselines3 PPO subclass logs per-update telemetry: alignment with fixed anchor decisions, update geometry and behaviour.'],
+      ['Benchmark', 'ShortcutGrid and TippingGrid pay a gameable proxy reward, while a separate oracle judges the true task.'],
+      ['Predeclare', 'Multi-seed studies with gates, thresholds and test layouts fixed before the runs.'],
+      ['Bound', 'A semantic-twin control tests what proxy-only signals can and cannot tell apart.'],
+    ],
+    outcome: {
+      label: 'Where it stands',
+      text: 'The results so far are negative, and reported that way. The composite score false-alarmed on 3 of 3 normal controls, and a proposed benchmark condition failed its predeclared AUC ≤ 0.60 gate at 0.731. A semantic-twin control then matched 5 of 5 paired policies on all 392 learner-visible updates while only one was harmful under the hidden objective: proxy-only signals cannot identify reward hacking without trusted outcome checks.',
+    },
+    links: [],
+    planet: { style: 3, axis: [0.32, 0.9, 0.29], atm: [0.45, 0.64, 1.0], rings: 0 },
+    planetName: 'Neptune',
+    planetNote: 'Ice giant, found in 1846 from its pull on Uranus’s orbit',
+    au: '30.1 AU',
   },
 ];
 

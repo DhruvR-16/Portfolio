@@ -10,7 +10,7 @@ const UNIFORMS = ['uRes', 'uTime', 'uDist', 'uFall', 'uIncl', 'uFov', 'uRoll', '
   'uDiskHot', 'uDiskMid', 'uDiskCool', 'uGlow', 'uNeb1', 'uNeb2', 'uNeb3', 'uBeam'];
 const MAX_PIXELS = 4.2e6;
 const MIN_SCALE = 0.55; // lowest render resolution, in device pixels per CSS pixel
-const PLANETS = 4; // the length of uP, uPA and uPC in shader.js
+const PLANETS = 6; // the length of uP, uPA and uPC in shader.js
 const FLIGHT = 1100; // ms for a planet to fly to its slot on a new page
 
 function compile(gl, type, src) {

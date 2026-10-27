@@ -25,11 +25,17 @@ export function WorkPage({ w }) {
           </motion.div>
           <motion.p className="world-kind" {...enter(0.25)}><span>World {two(i)}</span> {w.kind} · {w.years}</motion.p>
           <motion.h1 className="work-name" {...enter(0.32)}>{w.name}</motion.h1>
-          {w.credit && <motion.p className="chips" {...enter(0.38)}><span className="chip">{w.credit}</span></motion.p>}
+          {(w.status || w.credit) && (
+            <motion.p className="chips" {...enter(0.38)}>
+              {w.status && <span className="chip hot">{w.status}</span>}
+              {w.credit && <span className="chip">{w.credit}</span>}
+            </motion.p>
+          )}
           <motion.p className="work-tag" {...enter(0.44)}>{w.tagline}</motion.p>
           <motion.ul className="world-stack" {...enter(0.5)}>
             {w.stack.map((t) => <li key={t}>{t}</li>)}
           </motion.ul>
+          {w.links.length > 0 && (
           <motion.div className="world-links" {...enter(0.56)}>
             {w.links.map((l, j) => (
               <Magnetic key={l.href}>
@@ -39,6 +45,7 @@ export function WorkPage({ w }) {
               </Magnetic>
             ))}
           </motion.div>
+          )}
         </div>
         <figure className="world-planet">
           <div className="planet-slot" data-planet={w.id} aria-hidden="true" />
